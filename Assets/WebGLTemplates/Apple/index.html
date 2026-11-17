@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+      #unity-canvas { position: fixed; left: 0; top: 0; width: 100%; height: 100%; display: block; background: {{{ BACKGROUND_COLOR }}}; }
+      #rotate-overlay {
+        position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 10;
+        display: none; align-items: center; justify-content: center; flex-direction: column;
+        background: #000; color: #fff; font-family: sans-serif; text-align: center; font-size: 5vmin;
+      }
+      #rotate-overlay small { margin-top: 1em; opacity: 0.7; font-size: 3.5vmin; }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} tabindex="-1"></canvas>
+    <div id="rotate-overlay">
+      <div>Rotate your phone to portrait</div>
+      <small>Obróć telefon do pionu</small>
+    </div>
+    <script src="Build/{{{ LOADER_FILENAME }}}"></script>
+    <script>
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        var overlay = document.getElementById("rotate-overlay");
+
+        // Uses the device screen, not the page size, so a landscape-shaped embed frame does not trigger it.
+        function isDeviceLandscape() {
+          if (screen.orientation && screen.orientation.type)
+            return screen.orientation.type.indexOf("landscape") === 0;
+          if (typeof window.orientation === "number")
+            return Math.abs(window.orientation) === 90;
+          return screen.width > screen.height;
+        }
+
+        function updateOverlay() {
+          overlay.style.display = isDeviceLandscape() ? "flex" : "none";
+        }
+
+        updateOverlay();
+        window.addEventListener("orientationchange", updateOverlay);
+        window.addEventListener("resize", updateOverlay);
+        if (screen.orientation && screen.orientation.addEventListener)
+          screen.orientation.addEventListener("change", updateOverlay);
+
+        // Best effort: browsers only allow an orientation lock in fullscreen after a user gesture.
+        // It is not supported everywhere (for example iOS Safari), so every failure is ignored.
+        var tryLockPortrait = function () {
+          document.removeEventListener("pointerdown", tryLockPortrait);
+          try {
+            var request = document.documentElement.requestFullscreen
+              ? document.documentElement.requestFullscreen()
+              : Promise.reject();
+            request
+              .then(function () { return screen.orientation.lock("portrait"); })
+              .catch(function () {});
+          } catch (e) {}
+        };
+        document.addEventListener("pointerdown", tryLockPortrait);
+      }
+
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        arguments: [],
+        dataUrl: "Build/{{{ DATA_FILENAME }}}",
+        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
+#if USE_THREADS
+        workerUrl: "Build/{{{ WORKER_FILENAME }}}",
+#endif
+#if USE_WASM
+        codeUrl: "Build/{{{ CODE_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: "Build/{{{ SYMBOLS_FILENAME }}}",
+#endif
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+      }).catch(function (message) {
+        alert(message);
+      });
+    </script>
+  </body>
+</html>
