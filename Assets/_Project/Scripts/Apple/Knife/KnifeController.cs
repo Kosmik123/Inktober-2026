@@ -4,7 +4,8 @@ using UnityEngine.InputSystem;
 namespace Inktober.Apple.Knife
 {
     /// <summary>
-    /// Drives the knife across the apple: moves forward at constant speed and turns with the Steer action.
+    /// Keeps the knife still and moves the surface under it: the walker finds where the knife would be
+    /// next, then the surface is moved so that point lands on the knife. Constant speed, the Steer action turns.
     /// The way the knife sticks to the surface is a strategy, any <see cref="ISurfaceWalker"/> on the same object.
     /// </summary>
     public class KnifeController : MonoBehaviour
@@ -13,6 +14,10 @@ namespace Inktober.Apple.Knife
 
         [SerializeField]
         private InputActionReference steerAction;
+
+        [Tooltip("The object the knife walks on. It is moved so the knife itself stays still.")]
+        [SerializeField]
+        private Transform surface;
 
         [Header("Movement")]
         [Tooltip("Travel speed along the surface, in units per second.")]
@@ -54,9 +59,9 @@ namespace Inktober.Apple.Knife
                 return;
             }
 
-            if (steerAction == null)
+            if (steerAction == null || surface == null)
             {
-                Debug.LogError($"{nameof(KnifeController)} has no Steer action assigned.", this);
+                Debug.LogError($"{nameof(KnifeController)} needs the Steer action and the surface assigned.", this);
                 enabled = false;
             }
         }
@@ -70,7 +75,8 @@ namespace Inktober.Apple.Knife
                 return;
             }
 
-            ApplyPose();
+            // The knife is placed on the surface once and never moves again.
+            transform.SetPositionAndRotation(walker.Position, Quaternion.LookRotation(walker.Forward, walker.Normal));
         }
 
         private void Update()
@@ -85,7 +91,7 @@ namespace Inktober.Apple.Knife
 
             walker.Turn(degrees);
             walker.Advance(speed * deltaTime);
-            ApplyPose();
+            MoveSurfaceUnderKnife();
         }
 
         private float ReadTurnDegrees(float deltaTime)
@@ -99,9 +105,18 @@ namespace Inktober.Apple.Knife
             return control.device is Pointer ? x * pointerDegreesPerPixel : x * stickDegreesPerSecond * deltaTime;
         }
 
-        private void ApplyPose()
+        private void MoveSurfaceUnderKnife()
         {
-            transform.SetPositionAndRotation(walker.Position, Quaternion.LookRotation(walker.Forward, walker.Normal));
+            if (walker.IsOnSurface == false)
+                return;
+
+            var current = Quaternion.LookRotation(walker.Forward, walker.Normal);
+            var rotation = transform.rotation * Quaternion.Inverse(current);
+            var delta = Matrix4x4.Translate(transform.position) * Matrix4x4.Rotate(rotation) * Matrix4x4.Translate(-walker.Position);
+
+            surface.SetPositionAndRotation(delta.MultiplyPoint3x4(surface.position), rotation * surface.rotation);
+            Physics.SyncTransforms();
+            walker.Reanchor(delta);
         }
     }
 }

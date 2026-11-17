@@ -90,6 +90,14 @@ namespace Inktober.Apple.Knife
             }
         }
 
+        public void Reanchor(Matrix4x4 delta)
+        {
+            position = delta.MultiplyPoint3x4(position);
+            surfaceNormal = delta.MultiplyVector(surfaceNormal).normalized;
+            smoothedNormal = delta.MultiplyVector(smoothedNormal).normalized;
+            forward = delta.MultiplyVector(forward).normalized;
+        }
+
         private bool Step(float step)
         {
             var target = position + forward * step;

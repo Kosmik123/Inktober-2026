@@ -28,5 +28,11 @@ namespace Inktober.Apple.Knife
 
         /// <summary>Moves forward along the surface by the given distance.</summary>
         void Advance(float distance);
+
+        /// <summary>
+        /// Tells the walker that the surface it walks on was moved rigidly by <paramref name="delta"/>:
+        /// its position, normal and direction are transformed the same way.
+        /// </summary>
+        void Reanchor(Matrix4x4 delta);
     }
 }
