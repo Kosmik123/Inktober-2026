@@ -811,7 +811,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inktober.Apple.Knife.KnifeController
   steerAction: {fileID: 5334074148129782156, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  speed: 0.8
+  speed: 0.5
   maxTurnRate: 180
   pointerDegreesPerPixel: 0.2
   stickDegreesPerSecond: 180
