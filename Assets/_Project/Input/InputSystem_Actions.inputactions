@@ -30,7 +30,7 @@
                 {
                     "name": "",
                     "id": "0a308d19-5e7c-4685-9f9d-e732c23313db",
-                    "path": "<Touchscreen>/primaryTouch/delta",
+                    "path": "<TouchStick>/stick",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
