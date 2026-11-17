@@ -37,6 +37,28 @@
                     "action": "Steer",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2d646e5e-747a-4c87-96c4-7a4291351c80",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "stickDeadzone",
+                    "groups": "Gamepad",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f008b108-1eef-411c-b3a9-a5ad70382195",
+                    "path": "<Joystick>/stick",
+                    "interactions": "",
+                    "processors": "stickDeadzone",
+                    "groups": "Joystick",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
