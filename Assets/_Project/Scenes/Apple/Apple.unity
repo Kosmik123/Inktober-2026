@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
+  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -273,6 +274,22 @@ MonoBehaviour:
   minHorizontalFov: 35
   appliedVerticalFov: 35
   appliedHorizontalFov: 58.543987
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1d111ecf8f091a4bbe6d9cf2e51ec5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Inktober.Apple.Cameras.CameraFollow
+  target: {fileID: 2109668567}
+  offset: {x: 0, y: 0.8, z: -0.6}
+  lookAtOffset: {x: 0, y: 0, z: 0.2}
+  followSharpness: 0
 --- !u!1 &383592524
 GameObject:
   m_ObjectHideFlags: 0
