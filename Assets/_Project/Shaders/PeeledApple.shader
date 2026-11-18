@@ -10,7 +10,7 @@ Shader "Inktober/PeeledApple"
         _FleshSmoothness ("Flesh Smoothness", Range(0, 1)) = 0.8
         [NoScaleOffset] _Mask ("Peel Mask (R)", 2D) = "black" {}
         _MaskResolution ("Mask Resolution", Float) = 2048
-        _Threshold ("Colour Threshold", Range(0.05, 0.95)) = 0.5
+        _Threshold ("Color Threshold", Range(0.05, 0.95)) = 0.5
         _Depth ("Dent Depth (world units)", Range(0, 0.05)) = 0.006
     }
 
