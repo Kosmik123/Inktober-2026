@@ -24,7 +24,13 @@ namespace Inktober.UI
         [SerializeField]
         private string format = "{0:0} cm";
 
-        private void OnEnable()
+		private void Reset()
+		{
+			trail = FindAnyObjectByType<PeelTrail>();
+            label = GetComponentInChildren<TMP_Text>();
+		}
+
+		private void OnEnable()
         {
             trail.OnPointAdded += HandlePointAdded;
             trail.OnCleared += Refresh;
