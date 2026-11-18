@@ -33,15 +33,6 @@ namespace Inktober.Apple.Knife
         [SerializeField]
         private float maxTurnRate = 180f;
 
-        [Header("Steering")]
-        [Tooltip("Degrees of turn per pixel of pointer movement (mouse, touch).")]
-        [SerializeField]
-        private float pointerDegreesPerPixel = 0.2f;
-
-        [Tooltip("Degrees per second at full stick deflection (gamepad, joystick).")]
-        [SerializeField]
-        private float stickDegreesPerSecond = 180f;
-
         [Header("States")]
         [SerializeField]
         private float turnRate;
@@ -86,7 +77,7 @@ namespace Inktober.Apple.Knife
                 return;
 
             float limit = maxTurnRate * deltaTime;
-            float degrees = Mathf.Clamp(ReadTurnDegrees(deltaTime), -limit, limit);
+            float degrees = Mathf.Clamp(ReadTurnDegrees(), -limit, limit);
             turnRate = degrees / deltaTime;
 
             walker.Turn(degrees);
@@ -94,15 +85,10 @@ namespace Inktober.Apple.Knife
             MoveSurfaceUnderKnife();
         }
 
-        private float ReadTurnDegrees(float deltaTime)
+        /// <summary>Turn for this frame in degrees. The scaling per device (and delta time for sticks) is done by the binding processors.</summary>
+        private float ReadTurnDegrees()
         {
-            var action = steerAction.action;
-            var control = action.activeControl;
-            if (control == null)
-                return 0f;
-
-            float x = action.ReadValue<Vector2>().x;
-            return control.device is Pointer ? x * pointerDegreesPerPixel : x * stickDegreesPerSecond * deltaTime;
+            return steerAction.action.ReadValue<Vector2>().x;
         }
 
         private void MoveSurfaceUnderKnife()
