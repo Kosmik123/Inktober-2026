@@ -884,6 +884,7 @@ GameObject:
   - component: {fileID: 2109668567}
   - component: {fileID: 2109668566}
   - component: {fileID: 2109668565}
+  - component: {fileID: 2109668568}
   m_Layer: 0
   m_Name: Knife
   m_TagString: Untagged
@@ -907,8 +908,6 @@ MonoBehaviour:
   surface: {fileID: 383592528}
   speed: 0.5
   maxTurnRate: 180
-  pointerDegreesPerPixel: 0.2
-  stickDegreesPerSecond: 180
   turnRate: 0
 --- !u!114 &2109668566
 MonoBehaviour:
@@ -949,6 +948,24 @@ Transform:
   - {fileID: 1231423725}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2109668568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2109668564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 005fcc0ef07e6f9419d83657e17c6b9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Inktober.Apple.Peel.PeelTrail
+  surface: {fileID: 383592528}
+  width: 0.06
+  fleshColor: {r: 1, g: 0.85, b: 0.25, a: 1}
+  spacing: 0.01
+  drawGizmos: 1
+  length: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
