@@ -19,5 +19,5 @@ MonoBehaviour:
     use: 0
     _value: {fileID: 0}
   startingScenesContext:
-    use: 1
+    use: 0
     _value: {fileID: 0}
