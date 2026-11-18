@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5516692336460321277}
   - component: {fileID: 6018271294865815102}
   - component: {fileID: 8143001129649909254}
+  - component: {fileID: 4876507644940216281}
   m_Layer: 0
   m_Name: Knife
   m_TagString: Untagged
@@ -75,6 +76,24 @@ MonoBehaviour:
   speed: 0.5
   maxTurnRate: 180
   turnRate: 0
+--- !u!114 &4876507644940216281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633415887218931698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 005fcc0ef07e6f9419d83657e17c6b9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Inktober.Apple.Peel.PeelTrail
+  surface: {fileID: 0}
+  width: 0.15
+  fleshColor: {r: 1, g: 0.85, b: 0.25, a: 1}
+  spacing: 0.01
+  drawGizmos: 1
+  length: 0
 --- !u!1 &3500076982648884370
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,7 +202,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4340789518965488685, guid: e4f3759811450b44eb9ab98692330b82, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 4340789518965488685, guid: e4f3759811450b44eb9ab98692330b82, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
