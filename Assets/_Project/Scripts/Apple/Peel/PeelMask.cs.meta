@@ -1,2 +1,14 @@
 fileFormatVersion: 2
 guid: 2a940d845ebd63b4e825bc82486c8b16
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - trail: {instanceID: 0}
+  - targetRenderer: {instanceID: 0}
+  - brushShader: {fileID: 4800000, guid: 97e7b5d2ebec07f4781d941b35c5cc2c, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

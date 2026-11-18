@@ -8,6 +8,7 @@ namespace Inktober.Apple.Peel
     /// Every new segment of the <see cref="PeelTrail"/> is drawn into it, and the apple material (PeeledApple shader) reads it.
     /// Put it on the apple (the object the trail points are local to). The mask is only visual, the game logic uses the trail points.
     /// </summary>
+    [RequireComponent(typeof(MeshFilter))]
     public class PeelMask : MonoBehaviour
     {
         private const string MaskProperty = "_Mask";
