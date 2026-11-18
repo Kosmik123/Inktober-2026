@@ -60,4 +60,5 @@ MonoBehaviour:
   floating: 1
   followFinger: 1
   color: {r: 1, g: 1, b: 1, a: 1}
+  visible: 0
   pointerId: -2147483648
