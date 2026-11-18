@@ -3,4 +3,5 @@
   <Project Path="Bipolar.SceneManagement.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Bipolar.TouchSticks.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
 </Solution>
