@@ -18,6 +18,9 @@ namespace Inktober.Apple.Peel
         /// <summary>Raised after a point is added to the trail.</summary>
         public event Action<PeelPoint> OnPointAdded;
 
+        /// <summary>Raised after the trail is cleared (for example on restart).</summary>
+        public event Action OnCleared;
+
         [Tooltip("The peeled object. Points are stored in its local space.")]
         [SerializeField]
         private Transform surface;
@@ -70,6 +73,7 @@ namespace Inktober.Apple.Peel
         {
             points.Clear();
             length = 0f;
+            OnCleared?.Invoke();
         }
 
         private void Awake()
