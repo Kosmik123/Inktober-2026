@@ -6,15 +6,15 @@ namespace Inktober.Cameras
     /// Keeps a camera's field of view wide enough to satisfy both a minimum horizontal
     /// and a minimum vertical FOV, whatever the screen aspect ratio is.
     /// </summary>
-    [RequireComponent(typeof(Camera))]
     [ExecuteAlways]
+    [RequireComponent(typeof(Camera))]
     public class CameraFraming : MonoBehaviour
     {
         private const float MinAllowedFov = 1f;
         private const float MaxAllowedFov = 179f;
 
         [Tooltip("Minimum vertical field of view in degrees that must always be visible.")]
-        [SerializeField]
+        [SerializeField, Range(0, 179)]
         private float minVerticalFov = 35f;
         public float MinVerticalFov
         {
@@ -27,7 +27,7 @@ namespace Inktober.Cameras
         }
 
         [Tooltip("Minimum horizontal field of view in degrees that must always be visible.")]
-        [SerializeField]
+        [SerializeField, Range(0, 179)]
         private float minHorizontalFov = 35f;
         public float MinHorizontalFov
         {
