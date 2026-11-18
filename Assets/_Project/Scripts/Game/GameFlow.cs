@@ -99,7 +99,8 @@ namespace Inktober.Game
 				SetState(GameState.GameOver);
 		}
 
-		private void ConfirmAction_Performed(InputAction.CallbackContext context)
+		/// <summary>Starts the round, resumes after a pause or restarts after game over. Used by the confirm action and the UI button.</summary>
+		public void Confirm()
 		{
 			switch (state)
 			{
@@ -114,7 +115,18 @@ namespace Inktober.Game
 			}
 		}
 
+		private void ConfirmAction_Performed(InputAction.CallbackContext context)
+		{
+			Confirm();
+		}
+
 		private void PauseAction_Performed(InputAction.CallbackContext context)
+		{
+			TogglePause();
+		}
+
+		/// <summary>Pauses the round, or resumes it when paused. Used by the pause action and the UI button.</summary>
+		public void TogglePause()
 		{
 			switch (state)
 			{

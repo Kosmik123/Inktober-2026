@@ -1,0 +1,70 @@
+using Inktober.Game;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Inktober.UI
+{
+    /// <summary>
+    /// A button that confirms in <see cref="GameFlow"/> (start, resume, restart), for devices without a keyboard.
+    /// It is shown whenever the round is not being played, and its label follows the state.
+    /// Put this component on another object than the button, because the button object is hidden while playing.
+    /// </summary>
+    public class GameFlowButton : MonoBehaviour
+    {
+        [SerializeField]
+        private GameFlow gameFlow;
+
+        [SerializeField]
+        private Button button;
+
+        [SerializeField]
+        private TMP_Text label;
+
+        [Header("Labels")]
+        [SerializeField]
+        private string readyText = "Start";
+
+        [SerializeField]
+        private string pausedText = "Resume";
+
+        [SerializeField]
+        private string gameOverText = "Restart";
+
+        private void Reset()
+        {
+            gameFlow = FindAnyObjectByType<GameFlow>();
+            button = GetComponentInChildren<Button>(true);
+            label = GetComponentInChildren<TMP_Text>(true);
+        }
+
+        private void OnEnable()
+        {
+            gameFlow.OnStateChanged += GameFlow_OnStateChanged;
+            button.onClick.AddListener(gameFlow.Confirm);
+            Refresh(gameFlow.State);
+        }
+
+        private void Refresh(GameState state)
+        {
+            button.gameObject.SetActive(state != GameState.Playing);
+            label.text = state switch
+            {
+                GameState.Paused => pausedText,
+                GameState.GameOver => gameOverText,
+                _ => readyText,
+            };
+        }
+
+        private void GameFlow_OnStateChanged(GameState state)
+        {
+            Refresh(state);
+        }
+
+        private void OnDisable()
+        {
+            gameFlow.OnStateChanged -= GameFlow_OnStateChanged;
+            button.onClick.RemoveListener(gameFlow.Confirm);
+        }
+    }
+}
