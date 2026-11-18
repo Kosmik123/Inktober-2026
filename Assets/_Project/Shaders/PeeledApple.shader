@@ -5,9 +5,17 @@ Shader "Inktober/PeeledApple"
     Properties
     {
         _SkinColor ("Skin Color", Color) = (0.72, 0.07, 0.08, 1)
-        _FleshColor ("Flesh Color", Color) = (1, 0.85, 0.25, 1)
+        _SkinMap ("Skin Texture (multiplied by the color)", 2D) = "white" {}
+        [Normal] _SkinNormalMap ("Skin Normal Map", 2D) = "bump" {}
+        _SkinNormalScale ("Skin Normal Scale", Float) = 1
         _SkinSmoothness ("Skin Smoothness", Range(0, 1)) = 0.55
+
+        _FleshColor ("Flesh Color", Color) = (1, 0.85, 0.25, 1)
+        _FleshMap ("Flesh Texture (multiplied by the color)", 2D) = "white" {}
+        [Normal] _FleshNormalMap ("Flesh Normal Map", 2D) = "bump" {}
+        _FleshNormalScale ("Flesh Normal Scale", Float) = 1
         _FleshSmoothness ("Flesh Smoothness", Range(0, 1)) = 0.8
+
         [NoScaleOffset] _Mask ("Peel Mask (R)", 2D) = "black" {}
         _MaskResolution ("Mask Resolution", Float) = 2048
         _Threshold ("Color Threshold", Range(0.05, 0.95)) = 0.5
@@ -24,9 +32,24 @@ Shader "Inktober/PeeledApple"
         TEXTURE2D(_Mask);
         SAMPLER(sampler_Mask);
 
+        TEXTURE2D(_SkinMap);
+        SAMPLER(sampler_SkinMap);
+        TEXTURE2D(_SkinNormalMap);
+        SAMPLER(sampler_SkinNormalMap);
+        TEXTURE2D(_FleshMap);
+        SAMPLER(sampler_FleshMap);
+        TEXTURE2D(_FleshNormalMap);
+        SAMPLER(sampler_FleshNormalMap);
+
         CBUFFER_START(UnityPerMaterial)
             half4 _SkinColor;
             half4 _FleshColor;
+            float4 _SkinMap_ST;
+            float4 _SkinNormalMap_ST;
+            float4 _FleshMap_ST;
+            float4 _FleshNormalMap_ST;
+            half _SkinNormalScale;
+            half _FleshNormalScale;
             half _SkinSmoothness;
             half _FleshSmoothness;
             float _MaskResolution;
@@ -55,6 +78,7 @@ Shader "Inktober/PeeledApple"
             {
                 float4 positionOS : POSITION;
                 float3 normalOS : NORMAL;
+                float4 tangentOS : TANGENT;
                 float2 uv : TEXCOORD0;
             };
 
@@ -63,6 +87,7 @@ Shader "Inktober/PeeledApple"
                 float4 positionCS : SV_POSITION;
                 float3 positionWS : TEXCOORD0;
                 float3 normalWS : TEXCOORD1;
+                float4 tangentWS : TEXCOORD4;
                 float2 uv : TEXCOORD2;
                 half fogFactor : TEXCOORD3;
             };
@@ -103,6 +128,7 @@ Shader "Inktober/PeeledApple"
                 output.positionCS = positions.positionCS;
                 output.positionWS = positions.positionWS;
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
+                output.tangentWS = float4(TransformObjectToWorldDir(input.tangentOS.xyz), input.tangentOS.w * GetOddNegativeScale());
                 output.uv = input.uv;
                 output.fogFactor = ComputeFogFactor(positions.positionCS.z);
                 return output;
@@ -113,6 +139,20 @@ Shader "Inktober/PeeledApple"
                 float3 normalWS = normalize(input.normalWS);
                 float mask = SampleMask(input.uv);
                 float flesh = smoothstep(_Threshold - 0.1, _Threshold + 0.1, mask);
+
+                // Both layers are sampled and blended by the same weight as the colors.
+                float2 skinUV = TRANSFORM_TEX(input.uv, _SkinMap);
+                float2 fleshUV = TRANSFORM_TEX(input.uv, _FleshMap);
+                half3 skinTexture = SAMPLE_TEXTURE2D(_SkinMap, sampler_SkinMap, skinUV).rgb;
+                half3 fleshTexture = SAMPLE_TEXTURE2D(_FleshMap, sampler_FleshMap, fleshUV).rgb;
+                half3 skinNormalTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_SkinNormalMap, sampler_SkinNormalMap, TRANSFORM_TEX(input.uv, _SkinNormalMap)), _SkinNormalScale);
+                half3 fleshNormalTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_FleshNormalMap, sampler_FleshNormalMap, TRANSFORM_TEX(input.uv, _FleshNormalMap)), _FleshNormalScale);
+                half3 normalTS = normalize(lerp(skinNormalTS, fleshNormalTS, flesh));
+
+                // Normal map first, then the dent at the edge of the peel is added on top of it.
+                float3 bitangentWS = cross(normalWS, input.tangentWS.xyz) * input.tangentWS.w;
+                float3x3 tangentToWorld = float3x3(normalize(input.tangentWS.xyz), normalize(bitangentWS), normalWS);
+                normalWS = normalize(mul(normalTS, tangentToWorld));
 
                 normalWS = DentNormal(normalWS, input.positionWS, input.uv, mask);
 
@@ -128,7 +168,7 @@ Shader "Inktober/PeeledApple"
                 inputData.shadowMask = half4(1, 1, 1, 1);
 
                 SurfaceData surfaceData = (SurfaceData)0;
-                surfaceData.albedo = lerp(_SkinColor.rgb, _FleshColor.rgb, flesh);
+                surfaceData.albedo = lerp(_SkinColor.rgb * skinTexture, _FleshColor.rgb * fleshTexture, flesh);
                 surfaceData.smoothness = lerp(_SkinSmoothness, _FleshSmoothness, flesh);
                 surfaceData.occlusion = 1;
                 surfaceData.alpha = 1;
