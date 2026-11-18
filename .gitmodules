@@ -1,3 +1,6 @@
+[submodule "Assets/Bipolar/Scenes-Loading"]
+	path = Assets/Bipolar/Scenes-Loading
+	url = https://github.com/Kosmik123/Scenes-Loading.git
 [submodule "Assets/Bipolar/Touch-Sticks"]
 	path = Assets/Bipolar/Touch-Sticks
 	url = https://github.com/Bipolar-Games/Touch-Sticks
