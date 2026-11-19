@@ -35,13 +35,28 @@ namespace Inktober.Apple.Knife
         [SerializeField]
         private float maxTurnRate = 180f;
 
+        [Header("Blade")]
+        [Tooltip("Size of the blade along the direction of travel. The knife rests on the surface over this length, so smaller bumps do not tilt it.")]
+        [SerializeField]
+        private float bladeLength = 0.12f;
+
+        [Tooltip("Size of the blade across the direction of travel.")]
+        [SerializeField]
+        private float bladeWidth = 0.06f;
+
+        [Tooltip("How long the knife takes to ease towards the surface, in seconds. 0 follows the surface rigidly.")]
+        [SerializeField]
+        private float smoothTime = 0.08f;
+
         [Header("States")]
         [SerializeField]
         private float turnRate;
 
         private ISurfaceWalker walker;
+        private Collider surfaceCollider;
         private Vector3 homeDirection;
         private Vector3 heading;
+        private Pose pose;
 
         private void Awake()
         {
@@ -75,6 +90,9 @@ namespace Inktober.Apple.Knife
             // The knife stays above this point and keeps facing this way, the surface turns under it.
             homeDirection = (transform.position - surface.position).normalized;
             heading = transform.forward;
+
+            surfaceCollider = surface.GetComponentInChildren<Collider>();
+            pose = new Pose(transform.position, transform.rotation);
         }
 
         private void Update()
@@ -89,13 +107,38 @@ namespace Inktober.Apple.Knife
 
             walker.Turn(degrees);
             walker.Advance(speed * deltaTime);
-            KnifeSurfaceAligner.Apply(walker, transform, surface, homeDirection, heading);
+            KnifeSurfaceAligner.Apply(walker, surface, homeDirection, heading);
+            PlaceKnife(deltaTime);
+        }
+
+        /// <summary>
+        /// The walker point is exact, but the knife lies on its whole blade and eases towards that pose,
+        /// so facets and small bumps do not shake it. Only the look of the knife is smoothed, the peel follows the walker.
+        /// </summary>
+        private void PlaceKnife(float deltaTime)
+        {
+            if (walker.IsOnSurface == false)
+                return;
+
+            var target = new Pose(walker.Position, Quaternion.LookRotation(walker.Forward, walker.Normal));
+            if (surfaceCollider && KnifeBladeFit.TryFit(surfaceCollider, walker.Position, walker.Normal, walker.Forward, bladeLength, bladeWidth, out var fitted))
+                target = fitted;
+
+            pose = KnifePoseSmoother.Step(pose, target, deltaTime, smoothTime);
+            transform.SetPositionAndRotation(pose.position, pose.rotation);
         }
 
         /// <summary>Turn for this frame in degrees. The scaling per device (and delta time for sticks) is done by the binding processors.</summary>
         private float ReadTurnDegrees()
         {
             return steerAction.action.ReadValue<Vector2>().x;
+        }
+
+        private void OnValidate()
+        {
+            bladeLength = Mathf.Max(0.01f, bladeLength);
+            bladeWidth = Mathf.Max(0.01f, bladeWidth);
+            smoothTime = Mathf.Max(0f, smoothTime);
         }
     }
 }

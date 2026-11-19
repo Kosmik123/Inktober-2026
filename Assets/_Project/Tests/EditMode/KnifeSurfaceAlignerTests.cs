@@ -95,7 +95,7 @@ namespace Inktober.Tests.EditMode
             {
                 walker.Turn(Mathf.Sin(i * 0.05f) * 3f);
                 walker.Advance(0.013f);
-                KnifeSurfaceAligner.Apply(walker, knifeTransform, surface, home, heading);
+                KnifeSurfaceAligner.Apply(walker, surface, home, heading);
 
                 Assert.That(walker.IsOnSurface, Is.True, $"Left the surface in step {i}.");
                 Assert.That(surface.position, Is.EqualTo(Vector3.zero), $"The apple moved in step {i}.");
@@ -114,14 +114,14 @@ namespace Inktober.Tests.EditMode
             {
                 walker.Turn(Mathf.Sin(i * 0.013f) * 4f);
                 walker.Advance(0.013f);
-                KnifeSurfaceAligner.Apply(walker, knifeTransform, surface, home, heading);
+                KnifeSurfaceAligner.Apply(walker, surface, home, heading);
 
                 Assert.That(walker.IsOnSurface, Is.True, $"Left the surface in step {i}.");
 
-                float directionError = Vector3.Angle(knifeTransform.position, home);
+                float directionError = Vector3.Angle(walker.Position, home);
                 Assert.That(directionError, Is.LessThan(0.01f), $"The knife drifted around the apple in step {i}.");
 
-                float headingError = Vector3.Angle(Vector3.ProjectOnPlane(knifeTransform.forward, home), Vector3.ProjectOnPlane(heading, home));
+                float headingError = Vector3.Angle(Vector3.ProjectOnPlane(walker.Forward, home), Vector3.ProjectOnPlane(heading, home));
                 Assert.That(headingError, Is.LessThan(25f), $"The knife turned away in step {i}.");
             }
         }
@@ -137,7 +137,7 @@ namespace Inktober.Tests.EditMode
             for (int i = 0; i < 300; i++)
             {
                 walker.Advance(0.013f);
-                KnifeSurfaceAligner.Apply(walker, knifeTransform, surface, home, heading);
+                KnifeSurfaceAligner.Apply(walker, surface, home, heading);
 
                 var current = surface.InverseTransformPoint(walker.Position);
                 Assert.That(Vector3.Distance(previous, current), Is.EqualTo(0.013f).Within(0.004f), $"Step {i} was not a step.");

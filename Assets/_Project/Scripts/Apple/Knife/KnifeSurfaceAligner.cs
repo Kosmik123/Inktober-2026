@@ -6,7 +6,7 @@ namespace Inktober.Apple.Knife
     /// Keeps the surface in place and lets it only rotate around its center, so the knife stays almost still.
     /// The walker finds where the knife would be next. The surface is rotated so that point comes back under the knife,
     /// onto the line from the center through the knife's home direction. The difference in distance from the center is taken
-    /// by the knife, which slides along that line, and it is tilted to match the surface at the new point.
+    /// by the knife, which slides along that line.
     /// </summary>
     /// <remarks>
     /// The knife does not slide along its own tilted up axis: the surface slopes make that axis lean against the direction
@@ -17,11 +17,11 @@ namespace Inktober.Apple.Knife
         private const float Epsilon = 1e-6f;
 
         /// <summary>
-        /// Rotates <paramref name="surface"/> around its position and moves <paramref name="knife"/> to the walker point.
+        /// Rotates <paramref name="surface"/> around its position and tells the walker, which then stands on the home direction.
         /// <paramref name="homeDirection"/> is the world direction from the center to the knife, <paramref name="heading"/>
         /// is the world direction the knife keeps facing. The surface turns under both.
         /// </summary>
-        public static void Apply(ISurfaceWalker walker, Transform knife, Transform surface, Vector3 homeDirection, Vector3 heading)
+        public static void Apply(ISurfaceWalker walker, Transform surface, Vector3 homeDirection, Vector3 heading)
         {
             if (walker.IsOnSurface == false)
                 return;
@@ -33,8 +33,6 @@ namespace Inktober.Apple.Knife
             surface.rotation = rotation * surface.rotation;
             Physics.SyncTransforms();
             walker.Reanchor(delta);
-
-            knife.SetPositionAndRotation(walker.Position, Quaternion.LookRotation(walker.Forward, walker.Normal));
         }
 
         /// <summary>
