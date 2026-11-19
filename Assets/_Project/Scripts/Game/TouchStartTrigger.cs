@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Inktober.Game
 {
     /// <summary>
-    /// Starts the round on touch devices when the player puts a finger on the steering stick and holds it for a moment,
+    /// Starts the round on touch devices when the player moves the steering stick out of its dead zone,
     /// so there is no Start button and the finger that starts the round is already steering the knife.
     /// It only starts the round from the Ready state (resuming and restarting use the button).
     /// </summary>
@@ -13,17 +13,9 @@ namespace Inktober.Game
         [SerializeField]
         private GameFlow gameFlow;
 
-        [Tooltip("The steering stick. The round starts when a finger holds it, so the same finger steers right away.")]
+        [Tooltip("The steering stick. The round starts when its value leaves the dead zone (a finger resting on it is not enough).")]
         [SerializeField]
         private VirtualJoystick stick;
-
-        [Tooltip("How long the finger has to stay down before the round starts, in seconds. 0 starts at the first touch.")]
-        [SerializeField]
-        private float holdTime = 0.25f;
-
-        [Header("States")]
-        [SerializeField]
-        private float heldTime;
 
         private void Reset()
         {
@@ -42,14 +34,11 @@ namespace Inktober.Game
 
         private void Update()
         {
-            if (TouchPointers.Enabled == false || gameFlow.State != GameState.Ready || stick.IsPressed == false)
-            {
-                heldTime = 0f;
+            if (TouchPointers.Enabled == false || gameFlow.State != GameState.Ready)
                 return;
-            }
 
-            heldTime += Time.unscaledDeltaTime;
-            if (heldTime >= holdTime)
+            // The value of the stick is zero inside the dead zone.
+            if (stick.IsPressed && stick.Value != Vector2.zero)
                 gameFlow.Confirm();
         }
     }

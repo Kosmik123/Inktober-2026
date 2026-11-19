@@ -1140,8 +1140,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Inktober::Inktober.Game.TouchStartTrigger
   gameFlow: {fileID: 2143952308}
   stick: {fileID: 8439245048760818903}
-  holdTime: 0.25
-  heldTime: 0
 --- !u!1001 &2588640310172817185
 PrefabInstance:
   m_ObjectHideFlags: 0
