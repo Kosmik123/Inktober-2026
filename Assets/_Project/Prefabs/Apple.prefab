@@ -155,9 +155,9 @@ MonoBehaviour:
     shoulderWidening: 0.07
     shoulderAngle: 55
     shoulderSpread: 45
-    topDimpleDepth: 0.14
+    topDimpleDepth: 0.2
     topDimpleSpread: 22
-    bottomDimpleDepth: 0.08
+    bottomDimpleDepth: 0.1
     bottomDimpleSpread: 18
     unevenness: 0.025
     unevennessScale: 1.3

@@ -1388,6 +1388,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 82.655
       objectReference: {fileID: 0}
+    - target: {fileID: 4518125649311510015, guid: c022da28d578610478e86cb05b539393, type: 3}
+      propertyPath: shape.unevenness
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 5574061277041920829, guid: c022da28d578610478e86cb05b539393, type: 3}
       propertyPath: m_Name
       value: Apple
