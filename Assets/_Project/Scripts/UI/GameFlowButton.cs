@@ -1,3 +1,4 @@
+using Bipolar.TouchSticks;
 using Inktober.Game;
 using TMPro;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace Inktober.UI
     /// <summary>
     /// A button that confirms in <see cref="GameFlow"/> (start, resume, restart), for devices without a keyboard.
     /// It is shown whenever the round is not being played, and its label follows the state.
+    /// With touch controls it is not shown before the first round: holding the stick starts it (<see cref="TouchStartTrigger"/>).
     /// Put this component on another object than the button, because the button object is hidden while playing.
     /// </summary>
     public class GameFlowButton : MonoBehaviour
@@ -47,7 +49,9 @@ namespace Inktober.UI
 
         private void Refresh(GameState state)
         {
-            button.gameObject.SetActive(state != GameState.Playing);
+            // On touch devices the round is started by holding the stick (TouchStartTrigger), so there is no Start button.
+            bool startsByTouch = state == GameState.Ready && TouchPointers.Enabled;
+            button.gameObject.SetActive(state != GameState.Playing && startsByTouch == false);
             label.text = state switch
             {
                 GameState.Paused => pausedText,

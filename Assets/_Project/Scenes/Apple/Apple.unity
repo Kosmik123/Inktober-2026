@@ -1084,6 +1084,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2143952309}
   - component: {fileID: 2143952308}
+  - component: {fileID: 2143952310}
   m_Layer: 0
   m_Name: Game Flow
   m_TagString: Untagged
@@ -1125,6 +1126,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2143952310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2143952307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a411b47d040ff947ad5a02f40db90aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Inktober::Inktober.Game.TouchStartTrigger
+  gameFlow: {fileID: 2143952308}
+  stick: {fileID: 8439245048760818903}
+  holdTime: 0.25
+  heldTime: 0
 --- !u!1001 &2588640310172817185
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1590,6 +1607,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16feec50b21be3d4cae3a3b8cb889e40, type: 3}
+--- !u!114 &8439245048760818903 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6475851146775362791, guid: 16feec50b21be3d4cae3a3b8cb889e40, type: 3}
+  m_PrefabInstance: {fileID: 8439245048760818902}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffa9ce6a09680594c818725a56fd8cb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bipolar.TouchSticks::Bipolar.TouchSticks.VirtualJoystick
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
