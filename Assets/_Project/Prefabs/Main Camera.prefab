@@ -69,7 +69,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 100
-  field of view: 40
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -151,10 +151,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce396e0a03139074cadd98821d3d455b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inktober.Cameras.CameraFraming
-  minVerticalFov: 40
+  minVerticalFov: 60
   minHorizontalFov: 40
-  appliedVerticalFov: 40
-  appliedHorizontalFov: 65.81043
+  appliedVerticalFov: 60
+  appliedHorizontalFov: 77.29609
 --- !u!1183024399 &125120753123753661
 LookAtConstraint:
   m_ObjectHideFlags: 0

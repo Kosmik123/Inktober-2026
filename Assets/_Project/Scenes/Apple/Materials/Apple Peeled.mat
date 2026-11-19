@@ -28,11 +28,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FleshNormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: c675288c554c0f24a9fad1bcd15cceb3, type: 3}
+        m_Scale: {x: 12, y: 10}
         m_Offset: {x: 0, y: 0}
     - _Mask:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SkinMap:
@@ -40,17 +40,17 @@ Material:
         m_Scale: {x: 0.5, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SkinNormalMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: e6baf393909e42c4a9a8129f04f036f5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _Depth: 0.006
-    - _FleshNormalScale: 1
-    - _FleshSmoothness: 0.15
+    - _FleshNormalScale: 0.6
+    - _FleshSmoothness: 0.855
     - _MaskResolution: 2048
-    - _SkinNormalScale: 1
-    - _SkinSmoothness: 0.6
+    - _SkinNormalScale: 0.1
+    - _SkinSmoothness: 0.55
     - _Threshold: 0.5
     m_Colors:
     - _FleshColor: {r: 1, g: 0.90000004, b: 0.39999998, a: 1}

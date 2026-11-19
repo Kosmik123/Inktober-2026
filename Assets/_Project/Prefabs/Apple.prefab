@@ -131,6 +131,7 @@ MonoBehaviour:
   resolution: 1024
   edgeSoftness: 0.006
   paddingTexels: 3
+  overlap: 0.02
 --- !u!1 &5574061277041920829
 GameObject:
   m_ObjectHideFlags: 0
