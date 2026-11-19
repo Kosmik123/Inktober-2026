@@ -548,7 +548,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832575517}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
@@ -930,6 +930,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5446007134290952645}
     m_Modifications:
+    - target: {fileID: 835581937955008409, guid: b0d697ba53c4d78488d2ed66240fa4df, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 4771791370282894000, guid: b0d697ba53c4d78488d2ed66240fa4df, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1190,6 +1194,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knife
       objectReference: {fileID: 0}
+    - target: {fileID: 4816924802753758953, guid: 6481f281c04226346bb1599bda94460f, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 21a72cf1581149c479202f07d15cc74f, type: 2}
+    - target: {fileID: 4816924802753758953, guid: 6481f281c04226346bb1599bda94460f, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 21a72cf1581149c479202f07d15cc74f, type: 2}
     - target: {fileID: 4876507644940216281, guid: 6481f281c04226346bb1599bda94460f, type: 3}
       propertyPath: surface
       value: 
@@ -1255,14 +1267,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2268593276682149813, guid: c022da28d578610478e86cb05b539393, type: 3}
-      propertyPath: trail
-      value: 
-      objectReference: {fileID: 2109668568}
-    - target: {fileID: 2808241686571586106, guid: c022da28d578610478e86cb05b539393, type: 3}
-      propertyPath: trail
-      value: 
-      objectReference: {fileID: 2109668568}
     - target: {fileID: 4358454213545566823, guid: c022da28d578610478e86cb05b539393, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1306,18 +1310,6 @@ PrefabInstance:
     - target: {fileID: 5574061277041920829, guid: c022da28d578610478e86cb05b539393, type: 3}
       propertyPath: m_Name
       value: Apple
-      objectReference: {fileID: 0}
-    - target: {fileID: 6277631870133762428, guid: c022da28d578610478e86cb05b539393, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6277631870133762428, guid: c022da28d578610478e86cb05b539393, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6277631870133762428, guid: c022da28d578610478e86cb05b539393, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6907495419429361542, guid: c022da28d578610478e86cb05b539393, type: 3}
       propertyPath: trail

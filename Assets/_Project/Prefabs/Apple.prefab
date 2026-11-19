@@ -130,6 +130,7 @@ MonoBehaviour:
   brushShader: {fileID: 4800000, guid: 97e7b5d2ebec07f4781d941b35c5cc2c, type: 3}
   resolution: 1024
   edgeSoftness: 0.006
+  paddingTexels: 3
 --- !u!1 &5574061277041920829
 GameObject:
   m_ObjectHideFlags: 0
