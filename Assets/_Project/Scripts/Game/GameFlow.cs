@@ -14,7 +14,7 @@ namespace Inktober.Game
 		Ready,
 		Playing,
 		Paused,
-		/// <summary>The peel crossed itself. Restarting is possible after a short delay.</summary>
+		/// <summary>The peel crossed itself or the knife cut between two older lines. Restarting is possible after a short delay.</summary>
 		GameOver,
 	}
 
@@ -33,6 +33,9 @@ namespace Inktober.Game
 
 		[SerializeField]
 		private PeelSelfCollision selfCollision;
+
+		[SerializeField]
+		private PeelEnclosureDetector enclosure;
 
 		[Tooltip("Starts the round, resumes after a pause and restarts after game over (for example UI/Click).")]
 		[SerializeField]
@@ -57,11 +60,13 @@ namespace Inktober.Game
 		{
 			knife = FindAnyObjectByType<KnifeController>();
 			selfCollision = FindAnyObjectByType<PeelSelfCollision>();
+			enclosure = FindAnyObjectByType<PeelEnclosureDetector>();
 		}
 
 		private void OnEnable()
 		{
 			selfCollision.OnSelfIntersection += PeelSelfCollision_OnSelfIntersection;
+			enclosure.OnEnclosed += PeelEnclosureDetector_OnEnclosed;
 			confirmAction.action.performed += ConfirmAction_Performed;
 			pauseAction.action.performed += PauseAction_Performed;
 		}
@@ -97,6 +102,12 @@ namespace Inktober.Game
 		}
 
 		private void PeelSelfCollision_OnSelfIntersection(Vector3 crossingPoint)
+		{
+			if (state == GameState.Playing)
+				SetState(GameState.GameOver);
+		}
+
+		private void PeelEnclosureDetector_OnEnclosed(Vector3 position)
 		{
 			if (state == GameState.Playing)
 				SetState(GameState.GameOver);
@@ -145,6 +156,7 @@ namespace Inktober.Game
 		private void OnDisable()
 		{
 			selfCollision.OnSelfIntersection -= PeelSelfCollision_OnSelfIntersection;
+			enclosure.OnEnclosed -= PeelEnclosureDetector_OnEnclosed;
 			confirmAction.action.performed -= ConfirmAction_Performed;
 			pauseAction.action.performed -= PauseAction_Performed;
 		}
