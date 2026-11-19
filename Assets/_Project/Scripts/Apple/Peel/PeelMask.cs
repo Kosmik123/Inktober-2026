@@ -40,6 +40,10 @@ namespace Inktober.Apple.Peel
         [SerializeField]
         private float edgeSoftness = 0.006f;
 
+        [Tooltip("How far the painted triangles are grown beyond the borders of the UV islands, in texels. Hides the hairline at the UV seam.")]
+        [SerializeField]
+        private float paddingTexels = 3f;
+
         private RenderTexture mask;
         private Material brush;
         private Material appleMaterial;
@@ -95,10 +99,10 @@ namespace Inktober.Apple.Peel
                 return;
             }
 
-            mesh = filter.sharedMesh;
             brush = new Material(brushShader) { hideFlags = HideFlags.HideAndDontSave };
             commands = new CommandBuffer { name = nameof(PeelMask) };
             mask = CreateMask(Mathf.Max(16, resolution));
+            mesh = PeelBrushMesh.CreatePadded(filter.sharedMesh, mask.width, paddingTexels);
 
             appleMaterial = targetRenderer.material;
             appleMaterial.SetTexture(MaskProperty, mask);
@@ -133,6 +137,9 @@ namespace Inktober.Apple.Peel
             commands?.Release();
             if (brush != null)
                 Destroy(brush);
+
+            if (mesh != null)
+                Destroy(mesh);
 
             if (appleMaterial != null)
                 Destroy(appleMaterial);

@@ -99,25 +99,39 @@ Shader "Inktober/PeeledApple"
 
             // Tilts the normal against the gradient of the mask, so the flesh (mask = 1) looks lower than the skin.
             // The gradient is converted to world units, so the dent has the same depth on every part of the apple.
-            float3 DentNormal(float3 normalWS, float3 positionWS, float2 uv, float mask)
+            // normalWS is the normal to tilt (it may come from a normal map), surfaceNormalWS is the normal of the surface itself.
+            //
+            // The gradient of the mask is taken from samples of the texture, not from screen-space derivatives of the mask:
+            // those are wrong for the pixels next to the border of a UV island (the seam, the poles), where the coordinates
+            // of the neighbour pixels in a quad belong to another part of the texture. Only the screen-space derivatives of
+            // the UV and of the position are used, to learn how the texture lies on the surface.
+            float3 DentNormal(float3 normalWS, float3 surfaceNormalWS, float3 positionWS, float2 uv)
             {
-                // At the UV seam the coordinates jump within one pixel quad, so the derivatives of the mask are meaningless there.
+                // At the UV seam the coordinates jump within one pixel quad, so their derivatives are meaningless there.
                 float2 duv1 = ddx(uv);
                 float2 duv2 = ddy(uv);
                 if (max(max(abs(duv1.x), abs(duv2.x)), max(abs(duv1.y), abs(duv2.y))) > 0.25)
                     return normalWS;
 
-                // Surface gradient from screen-space derivatives (Mikkelsen): find the vector g in the surface plane
-                // with g . dp1 = change of the mask per pixel in x, and g . dp2 = change per pixel in y.
+                // Surface gradient from screen-space derivatives (Mikkelsen): for a value f that changes by ddx(f) and ddy(f)
+                // per pixel, the gradient along the surface is (ddx(f) * dp2perp + ddy(f) * dp1perp) / determinant.
                 float3 dp1 = ddx(positionWS);
                 float3 dp2 = ddy(positionWS);
-                float3 dp2perp = cross(dp2, normalWS);
-                float3 dp1perp = cross(normalWS, dp1);
+                float3 dp2perp = cross(dp2, surfaceNormalWS);
+                float3 dp1perp = cross(surfaceNormalWS, dp1);
                 float determinant = dot(dp1, dp2perp);
                 if (abs(determinant) < 1e-12)
                     return normalWS;
 
-                float3 gradient = (ddx(mask) * dp2perp + ddy(mask) * dp1perp) / determinant;
+                float3 gradientU = (duv1.x * dp2perp + duv2.x * dp1perp) / determinant;
+                float3 gradientV = (duv1.y * dp2perp + duv2.y * dp1perp) / determinant;
+
+                // Change of the mask per unit of U and V, from the texture itself.
+                float texel = 1.0 / _MaskResolution;
+                float dMaskDu = (SampleMask(uv + float2(texel, 0)) - SampleMask(uv - float2(texel, 0))) / (2.0 * texel);
+                float dMaskDv = (SampleMask(uv + float2(0, texel)) - SampleMask(uv - float2(0, texel))) / (2.0 * texel);
+
+                float3 gradient = dMaskDu * gradientU + dMaskDv * gradientV;
                 return normalize(normalWS + _Depth * gradient);
             }
 
@@ -136,7 +150,8 @@ Shader "Inktober/PeeledApple"
 
             half4 frag(Varyings input) : SV_Target
             {
-                float3 normalWS = normalize(input.normalWS);
+                float3 surfaceNormalWS = normalize(input.normalWS);
+                float3 normalWS = surfaceNormalWS;
                 float mask = SampleMask(input.uv);
                 float flesh = smoothstep(_Threshold - 0.1, _Threshold + 0.1, mask);
 
@@ -154,7 +169,7 @@ Shader "Inktober/PeeledApple"
                 float3x3 tangentToWorld = float3x3(normalize(input.tangentWS.xyz), normalize(bitangentWS), normalWS);
                 normalWS = normalize(mul(normalTS, tangentToWorld));
 
-                normalWS = DentNormal(normalWS, input.positionWS, input.uv, mask);
+                normalWS = DentNormal(normalWS, surfaceNormalWS, input.positionWS, input.uv);
 
                 InputData inputData = (InputData)0;
                 inputData.positionWS = input.positionWS;
