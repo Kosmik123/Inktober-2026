@@ -5,7 +5,8 @@ namespace Inktober.Apple.Peel
 {
     /// <summary>
     /// Keeps the peel mask: a texture that is 1 where the apple is peeled and 0 where the skin is left.
-    /// Every new segment of the <see cref="PeelTrail"/> is drawn into it, and the apple material (PeeledApple shader) reads it.
+    /// Every new step of the <see cref="PeelTrail"/> is drawn into it as a rectangle (square ends, no dot at the start),
+    /// and the apple material (PeeledApple shader) reads it.
     /// Put it on the apple (the object the trail points are local to). The mask is only visual, the game logic uses the trail points.
     /// </summary>
     [RequireComponent(typeof(MeshFilter))]
@@ -15,10 +16,17 @@ namespace Inktober.Apple.Peel
         private const string MaskResolutionProperty = "_MaskResolution";
         private const string FleshColorProperty = "_FleshColor";
 
+        // A step shorter than this (in local units) has no direction, so it paints nothing.
+        private const float MinStrokeLength = 1e-6f;
+
         private static readonly int SegmentStartId = Shader.PropertyToID("_SegmentStart");
-        private static readonly int SegmentEndId = Shader.PropertyToID("_SegmentEnd");
+        private static readonly int SegmentDirectionId = Shader.PropertyToID("_SegmentDirection");
+        private static readonly int SegmentSideId = Shader.PropertyToID("_SegmentSide");
+        private static readonly int SegmentNormalId = Shader.PropertyToID("_SegmentNormal");
+        private static readonly int SegmentLengthId = Shader.PropertyToID("_SegmentLength");
         private static readonly int HalfWidthId = Shader.PropertyToID("_HalfWidth");
         private static readonly int SoftnessId = Shader.PropertyToID("_Softness");
+        private static readonly int OverlapId = Shader.PropertyToID("_Overlap");
 
         [SerializeField]
         private PeelTrail trail;
@@ -44,6 +52,10 @@ namespace Inktober.Apple.Peel
         [SerializeField]
         private float paddingTexels = 3f;
 
+        [Tooltip("How far each rectangle of the brush reaches back over the previous one, in world units. Closes the gap at turns; the front edge fades out over the same distance.")]
+        [SerializeField]
+        private float overlap = 0.004f;
+
         private RenderTexture mask;
         private Material brush;
         private Material appleMaterial;
@@ -68,20 +80,33 @@ namespace Inktober.Apple.Peel
             RenderTexture.active = previous;
         }
 
-        /// <summary>Draws a stroke of the current trail width between two points given in the local space of this object.</summary>
-        public void Paint(Vector3 from, Vector3 to)
+        /// <summary>
+        /// Draws a rectangle of the current trail width from one point to the next, both given in the local space of this object.
+        /// The rectangle lies in the plane tangent to the surface (given by <paramref name="normal"/>), has square ends and covers only the step itself.
+        /// </summary>
+        public void Paint(Vector3 from, Vector3 to, Vector3 normal)
         {
             if (mask == null || mesh == null)
                 return;
 
+            var direction = Vector3.ProjectOnPlane(to - from, normal);
+            float length = direction.magnitude;
+            if (length < MinStrokeLength)
+                return;
+
+            direction /= length;
             float scale = Mathf.Max(Mathf.Abs(transform.lossyScale.x), 1e-5f);
             float halfWidth = trail.Width * 0.5f / scale;
             float softness = Mathf.Min(edgeSoftness / scale, halfWidth * 0.99f);
 
             brush.SetVector(SegmentStartId, from);
-            brush.SetVector(SegmentEndId, to);
+            brush.SetVector(SegmentDirectionId, direction);
+            brush.SetVector(SegmentSideId, Vector3.Cross(normal, direction));
+            brush.SetVector(SegmentNormalId, normal);
+            brush.SetFloat(SegmentLengthId, length);
             brush.SetFloat(HalfWidthId, halfWidth);
             brush.SetFloat(SoftnessId, softness);
+            brush.SetFloat(OverlapId, overlap / scale);
 
             commands.Clear();
             commands.SetRenderTarget(mask);
@@ -147,9 +172,10 @@ namespace Inktober.Apple.Peel
 
         private void HandlePointAdded(PeelPoint point)
         {
-            // The first point is a dot, the next ones are strokes from the previous point.
-            var from = hasLastPoint ? lastPoint : point.Position;
-            Paint(from, point.Position);
+            // The first point only marks where the knife is: nothing is peeled until it moves.
+            if (hasLastPoint)
+                Paint(lastPoint, point.Position, point.Normal);
+
             lastPoint = point.Position;
             hasLastPoint = true;
         }
