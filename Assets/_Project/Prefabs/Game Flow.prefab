@@ -50,7 +50,7 @@ MonoBehaviour:
   enclosure: {fileID: 0}
   confirmAction: {fileID: 392368643174621059, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   pauseAction: {fileID: 7727032971491509709, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  restartDelay: 0.7
+  restartDelay: 0.4
   state: 0
 --- !u!114 &3755292324750015205
 MonoBehaviour:
