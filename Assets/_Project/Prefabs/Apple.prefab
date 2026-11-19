@@ -128,7 +128,7 @@ MonoBehaviour:
   trail: {fileID: 0}
   targetRenderer: {fileID: 2868871636409960157}
   brushShader: {fileID: 4800000, guid: 97e7b5d2ebec07f4781d941b35c5cc2c, type: 3}
-  resolution: 2048
+  resolution: 1024
   edgeSoftness: 0.006
 --- !u!1 &5574061277041920829
 GameObject:
