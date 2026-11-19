@@ -1,4 +1,5 @@
 using System;
+using Bipolar.TouchSticks;
 using Inktober.Apple.Knife;
 using Inktober.Apple.Peel;
 using UnityEngine;
@@ -84,8 +85,10 @@ namespace Inktober.Game
 
 		private void ApplyCursor(bool playing)
 		{
-			Cursor.lockState = playing ? CursorLockMode.Locked : CursorLockMode.None;
-			Cursor.visible = playing == false;
+			// Touch devices have no cursor to lock, and Chrome on Android rejects the pointer lock request with an UnknownError.
+			bool locked = playing && TouchPointers.Enabled == false;
+			Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+			Cursor.visible = locked == false;
 		}
 
 		private void Restart()
