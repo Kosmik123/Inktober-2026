@@ -1,6 +1,7 @@
 // Paints the peel mask. The mesh is drawn "unwrapped": every vertex lands where its UV is, so the
 // pass fills the mask texture. The brush is a rectangle laid along the knife segment: it is as wide as the strip
-// and as long as the step of the knife, and it has no round ends, so nothing is peeled ahead of the knife.
+// and as long as the step of the knife plus a configurable extension behind it. It has no round ends,
+// so nothing is peeled ahead of the knife.
 // Every texel is placed in the object space of the mesh (in 3D), so the stroke has the real width everywhere,
 // also at the poles and the UV seam.
 Shader "Hidden/Inktober/PeelMaskBrush"
@@ -30,7 +31,7 @@ Shader "Hidden/Inktober/PeelMaskBrush"
             float _SegmentLength;       // object space units
             float _HalfWidth;           // object space units
             float _Softness;            // soft edge of the sides, object space units
-            float _Overlap;             // how far the rectangle reaches back over the previous one, object space units
+            float _Extension;           // how far the rectangle reaches back behind the start of the step, object space units
 
             struct Attributes
             {
@@ -66,13 +67,12 @@ Shader "Hidden/Inktober/PeelMaskBrush"
                 // The far side of the object is as close in the plane of the stroke, but far along the normal.
                 float sameSurface = step(abs(height), _HalfWidth);
 
-                // The sides are soft (they are the edge of the peel). The beginning reaches back over the previous
-                // rectangle, and the front fades out over the same distance, which the next rectangle covers again,
-                // so the rectangles join without a seam.
+                // The sides are soft (they are the edge of the peel). The front is square: nothing is peeled ahead of the step.
+                // The rectangle reaches back behind the start of the step, over the previous rectangles, so that
+                // consecutive steps join without a seam and turns leave no gap.
                 float sides = 1.0 - smoothstep(_HalfWidth - _Softness, _HalfWidth, abs(across));
-                float overlap = max(_Overlap, 1e-6);
-                float back = step(-overlap, along);
-                float front = saturate((_SegmentLength - along) / overlap);
+                float back = step(-_Extension, along);
+                float front = step(along, _SegmentLength);
 
                 float value = sides * back * front * sameSurface;
                 return half4(value, 0, 0, 0);

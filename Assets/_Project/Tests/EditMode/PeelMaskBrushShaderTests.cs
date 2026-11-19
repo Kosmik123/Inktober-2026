@@ -15,7 +15,7 @@ namespace Inktober.Tests.EditMode
         private const int Size = 256;
         private const float HalfWidth = 0.05f;
         private const float Softness = 0.01f;
-        private const float Overlap = 0.01f;
+        private const float Extension = 0.03f;
 
         // The stroke runs along +X at y = 0.5, from x = 0.2 to x = 0.6. The surface normal is +Z, so the side axis is +Y.
         private const float Start = 0.2f;
@@ -79,7 +79,7 @@ namespace Inktober.Tests.EditMode
             mesh.triangles = new[] { 0, 2, 1, 0, 3, 2 };
         }
 
-        private void Paint(float length = End - Start)
+        private void Paint(float length = End - Start, float extension = Extension)
         {
             material.SetVector("_SegmentStart", new Vector3(Start, Row, 0f));
             material.SetVector("_SegmentDirection", Vector3.right);
@@ -88,7 +88,7 @@ namespace Inktober.Tests.EditMode
             material.SetFloat("_SegmentLength", length);
             material.SetFloat("_HalfWidth", HalfWidth);
             material.SetFloat("_Softness", Softness);
-            material.SetFloat("_Overlap", Overlap);
+            material.SetFloat("_Extension", extension);
 
             commands.Clear();
             commands.SetRenderTarget(mask);
@@ -142,25 +142,34 @@ namespace Inktober.Tests.EditMode
         }
 
         [Test]
-        public void BehindTheStart_IsPeeledOnlyWithinTheOverlap()
+        public void BehindTheStart_IsPeeledOnlyWithinTheExtension()
         {
             CreateSurface(0f);
             Paint();
 
-            Assert.AreEqual(1f, ValueAt(Start - Overlap * 0.5f, Row), 0.02f, "The rectangle reaches back over the previous one.");
-            Assert.AreEqual(0f, ValueAt(Start - Overlap * 3f, Row), 0.02f, "It does not reach farther back.");
+            Assert.AreEqual(1f, ValueAt(Start - Extension * 0.5f, Row), 0.02f, "The rectangle reaches back behind the start of the step.");
+            Assert.AreEqual(1f, ValueAt(Start - Extension * 0.9f, Row), 0.02f);
+            Assert.AreEqual(0f, ValueAt(Start - Extension * 1.5f, Row), 0.02f, "It does not reach farther back.");
         }
 
         [Test]
-        public void TheFrontEdge_FadesOutOverTheOverlap()
+        public void TheFrontEdge_IsSquare()
         {
             CreateSurface(0f);
             Paint();
 
-            float value = ValueAt(End - Overlap * 0.5f, Row);
+            Assert.AreEqual(1f, ValueAt(End - 0.01f, Row), 0.02f);
+            Assert.AreEqual(0f, ValueAt(End + 0.01f, Row), 0.02f);
+        }
 
-            Assert.Greater(value, 0.2f);
-            Assert.Less(value, 0.8f);
+        [Test]
+        public void WithoutExtension_ThereIsNothingBehindTheStart()
+        {
+            CreateSurface(0f);
+            Paint(extension: 0f);
+
+            Assert.AreEqual(1f, ValueAt(Start + 0.01f, Row), 0.02f);
+            Assert.AreEqual(0f, ValueAt(Start - 0.01f, Row), 0.02f);
         }
 
         [Test]

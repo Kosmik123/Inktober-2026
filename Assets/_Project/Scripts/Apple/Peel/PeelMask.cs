@@ -26,7 +26,7 @@ namespace Inktober.Apple.Peel
         private static readonly int SegmentLengthId = Shader.PropertyToID("_SegmentLength");
         private static readonly int HalfWidthId = Shader.PropertyToID("_HalfWidth");
         private static readonly int SoftnessId = Shader.PropertyToID("_Softness");
-        private static readonly int OverlapId = Shader.PropertyToID("_Overlap");
+        private static readonly int ExtensionId = Shader.PropertyToID("_Extension");
 
         [SerializeField]
         private PeelTrail trail;
@@ -52,9 +52,9 @@ namespace Inktober.Apple.Peel
         [SerializeField]
         private float paddingTexels = 3f;
 
-        [Tooltip("How far each rectangle of the brush reaches back over the previous one, in world units. Closes the gap at turns; the front edge fades out over the same distance.")]
+        [Tooltip("How far each rectangle of the brush reaches back behind the start of its step, in world units. The length of the rectangle is the step plus this. A longer rectangle closes the gap at sharp turns, but bulges a little on the outside of a turn.")]
         [SerializeField]
-        private float overlap = 0.004f;
+        private float extension = 0.02f;
 
         private RenderTexture mask;
         private Material brush;
@@ -82,7 +82,8 @@ namespace Inktober.Apple.Peel
 
         /// <summary>
         /// Draws a rectangle of the current trail width from one point to the next, both given in the local space of this object.
-        /// The rectangle lies in the plane tangent to the surface (given by <paramref name="normal"/>), has square ends and covers only the step itself.
+        /// The rectangle lies in the plane tangent to the surface (given by <paramref name="normal"/>) and has square ends.
+        /// It covers the step itself and reaches back behind it by the configured extension; nothing is painted ahead of the step.
         /// </summary>
         public void Paint(Vector3 from, Vector3 to, Vector3 normal)
         {
@@ -106,7 +107,7 @@ namespace Inktober.Apple.Peel
             brush.SetFloat(SegmentLengthId, length);
             brush.SetFloat(HalfWidthId, halfWidth);
             brush.SetFloat(SoftnessId, softness);
-            brush.SetFloat(OverlapId, overlap / scale);
+            brush.SetFloat(ExtensionId, Mathf.Max(0f, extension) / scale);
 
             commands.Clear();
             commands.SetRenderTarget(mask);
