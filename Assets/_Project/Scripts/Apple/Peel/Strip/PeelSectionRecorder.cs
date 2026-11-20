@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Inktober.Apple.Shape;
 using UnityEngine;
 
 namespace Inktober.Apple.Peel
@@ -22,6 +23,9 @@ namespace Inktober.Apple.Peel
         private Vector3 lastPosition;
         private Vector3 lastChord;
         private bool hasLastChord;
+        private float lastLeftU;
+        private float lastRightU;
+        private bool hasUv;
 
         /// <param name="spacing">Peel length between two sections, in world units.</param>
         /// <param name="ignoredTailLength">See <see cref="PeelEnclosure.TryMeasure"/>.</param>
@@ -57,7 +61,11 @@ namespace Inktober.Apple.Peel
                 return false;
 
             PeelStripWidth.Edges(coverLeftSum / samples, coverRightSum / samples, width, out float leftEdge, out float rightEdge);
-            section = new PeelSection(length, leftEdge, rightEdge, MeasureTurn(points[points.Count - 1]));
+
+            var newest = points[points.Count - 1];
+            float turn = MeasureTurn(newest);
+            MeasureUv(newest, leftEdge, rightEdge, scale, out var leftUv, out var rightUv);
+            section = new PeelSection(length, leftEdge, rightEdge, turn, leftUv, rightUv);
 
             coverLeftSum = 0f;
             coverRightSum = 0f;
@@ -76,6 +84,7 @@ namespace Inktober.Apple.Peel
             lastDistance = 0f;
             hasSection = false;
             hasLastChord = false;
+            hasUv = false;
         }
 
         /// <summary>
@@ -100,6 +109,26 @@ namespace Inktober.Apple.Peel
 
             lastPosition = newest.Position;
             return turn;
+        }
+
+        /// <summary>
+        /// Where the two edges of the strip lay on the textures of the apple. The points are in the local space of the apple,
+        /// so the direction from its center is enough. U is shifted by whole numbers so that it does not jump at the seam
+        /// between two sections (the textures repeat), and both edges of a section stay on the same side of the seam.
+        /// </summary>
+        private void MeasureUv(PeelPoint newest, float leftEdge, float rightEdge, float scale, out Vector2 leftUv, out Vector2 rightUv)
+        {
+            float safeScale = Mathf.Max(scale, 1e-6f);
+            var right = newest.Right;
+            leftUv = AppleUv.FromDirection(newest.Position + right * (leftEdge / safeScale));
+            rightUv = AppleUv.FromDirection(newest.Position + right * (rightEdge / safeScale));
+
+            leftUv.x += Mathf.Round((hasUv ? lastLeftU : leftUv.x) - leftUv.x);
+            rightUv.x += Mathf.Round((hasUv ? lastRightU : leftUv.x) - rightUv.x);
+
+            lastLeftU = leftUv.x;
+            lastRightU = rightUv.x;
+            hasUv = true;
         }
     }
 }

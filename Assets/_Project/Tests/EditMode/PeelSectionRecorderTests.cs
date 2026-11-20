@@ -189,6 +189,66 @@ namespace Inktober.Tests.EditMode
             Assert.That(turns.Max(), Is.LessThan(0.01f));
         }
 
+        // A point on the equator at the given angle around the apple, as the knife would leave it (travelling towards growing U).
+        private static PeelPoint PointOnTheEquator(float phi)
+        {
+            var direction = new Vector3(-Mathf.Cos(phi), 0f, -Mathf.Sin(phi));
+            var forward = new Vector3(Mathf.Sin(phi), 0f, -Mathf.Cos(phi));
+            return new PeelPoint(direction * 0.5f, Vector3.up, forward);
+        }
+
+        [Test]
+        public void TheUv_OfTheEdges_IsWhereTheEdgesLieOnTheApple()
+        {
+            var recorder = NewRecorder();
+            var points = new List<PeelPoint> { PointOnTheEquator(Mathf.PI) };
+
+            recorder.TryRecord(points, 0f, Width, 1f, out var section);
+
+            // At the angle of 180 degrees the apple is at +X and U is a half. V is a half on the equator.
+            Assert.That(section.LeftUv.x, Is.EqualTo(0.5f).Within(0.02f));
+            Assert.That(section.RightUv.x, Is.EqualTo(0.5f).Within(0.02f));
+            Assert.That(section.LeftUv.y, Is.EqualTo(0.5f).Within(1e-3f));
+        }
+
+        [Test]
+        public void TheEdges_AreOnTheSameSideOfTheSeam()
+        {
+            var recorder = NewRecorder();
+
+            // On the seam, travelling towards the north pole, so the left edge is on one side of the seam and the right edge on the other.
+            var points = new List<PeelPoint> { new PeelPoint(new Vector3(-0.5f, 0f, 0f), Vector3.left, Vector3.up) };
+
+            recorder.TryRecord(points, 0f, Width, 1f, out var section);
+
+            Assert.That(Mathf.Abs(section.LeftUv.x - section.RightUv.x), Is.LessThan(0.1f));
+            Assert.That(section.RightUv.x, Is.GreaterThan(section.LeftUv.x));
+        }
+
+        [Test]
+        public void TheUv_KeepsGrowingAcrossTheSeam()
+        {
+            var recorder = NewRecorder();
+            var leftU = new List<float>();
+            float length = 0f;
+
+            // Goes around the apple from just before the seam to just after it, in steps of one section.
+            for (int i = 0; i < 12; i++)
+            {
+                var points = new List<PeelPoint> { PointOnTheEquator(2f * Mathf.PI - 0.1f + i * 0.02f) };
+                if (recorder.TryRecord(points, length, Width, 1f, out var section))
+                    leftU.Add(section.LeftUv.x);
+
+                length += Spacing * 1.01f;
+            }
+
+            Assert.That(leftU.Count, Is.EqualTo(12));
+            for (int i = 1; i < leftU.Count; i++)
+                Assert.That(leftU[i] - leftU[i - 1], Is.InRange(0f, 0.1f), $"U jumped between the sections {i - 1} and {i}.");
+
+            Assert.That(leftU[leftU.Count - 1], Is.GreaterThan(1f));
+        }
+
         [Test]
         public void Clear_StartsANewStrip()
         {

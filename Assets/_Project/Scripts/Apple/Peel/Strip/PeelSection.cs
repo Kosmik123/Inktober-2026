@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Inktober.Apple.Peel
 {
     /// <summary>
@@ -6,12 +8,14 @@ namespace Inktober.Apple.Peel
     /// </summary>
     public readonly struct PeelSection
     {
-        public PeelSection(float distance, float leftEdge, float rightEdge, float turn = 0f)
+        public PeelSection(float distance, float leftEdge, float rightEdge, float turn = 0f, Vector2 leftUv = default, Vector2 rightUv = default)
         {
             Distance = distance;
             LeftEdge = leftEdge;
             RightEdge = rightEdge;
             Turn = turn;
+            LeftUv = leftUv;
+            RightUv = rightUv;
         }
 
         /// <summary>Length of the peel at the section, in world units.</summary>
@@ -25,6 +29,12 @@ namespace Inktober.Apple.Peel
 
         /// <summary>How far the knife path turned since the previous section, in degrees along the surface. Positive turns right.</summary>
         public float Turn { get; }
+
+        /// <summary>Where the left edge lay on the textures of the apple. U goes on past 1 instead of jumping back at the seam.</summary>
+        public Vector2 LeftUv { get; }
+
+        /// <summary>Where the right edge lay on the textures of the apple. U goes on past 1 instead of jumping back at the seam.</summary>
+        public Vector2 RightUv { get; }
 
         /// <summary>Width of the strip at the section, in world units.</summary>
         public float Width => RightEdge - LeftEdge;
