@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6018271294865815102}
   - component: {fileID: 8143001129649909254}
   - component: {fileID: 4876507644940216281}
+  - component: {fileID: 2168278032541960266}
   m_Layer: 0
   m_Name: Knife
   m_TagString: Untagged
@@ -74,6 +75,9 @@ MonoBehaviour:
   surface: {fileID: 0}
   speed: 0.5
   maxTurnRate: 180
+  bladeLength: 0.12
+  bladeWidth: 0.06
+  smoothTime: 0.08
   turnRate: 0
 --- !u!114 &4876507644940216281
 MonoBehaviour:
@@ -93,6 +97,22 @@ MonoBehaviour:
   spacing: 0.01
   drawGizmos: 1
   length: 0
+--- !u!114 &2168278032541960266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 633415887218931698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb2d3deeeee407b4eae382c535de0ec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Inktober::Inktober.Apple.Peel.PeelWidthProfile
+  trail: {fileID: 4876507644940216281}
+  sectionSpacing: 0.03
+  ignoredTailLength: 0.2
+  heightTolerance: 0.03
 --- !u!1001 &7994461755407142203
 PrefabInstance:
   m_ObjectHideFlags: 0
