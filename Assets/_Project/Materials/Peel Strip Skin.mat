@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Peel Strip Skin
   m_Shader: {fileID: 4800000, guid: 0d9a994507df1a64aba925ece54ae4ce, type: 3}
-  m_Parent: {fileID: 0}
+  m_Parent: {fileID: 2100000, guid: 0df5507f53ef81d42b922a27f4460025, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -23,37 +23,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _FleshMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _FleshNormalMap:
-        m_Texture: {fileID: 2800000, guid: c675288c554c0f24a9fad1bcd15cceb3, type: 3}
-        m_Scale: {x: 12, y: 10}
-        m_Offset: {x: 0, y: 0}
     - _Mask:
         m_Texture: {fileID: 2800000, guid: 9f2982aa0113e1c43b8277dcc26731c5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SkinMap:
-        m_Texture: {fileID: 2800000, guid: fd810377d03d2e1429c7bd4c20c12a2f, type: 3}
-        m_Scale: {x: 0.5, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SkinNormalMap:
-        m_Texture: {fileID: 2800000, guid: e6baf393909e42c4a9a8129f04f036f5, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats:
-    - _Depth: 0.006
-    - _FleshNormalScale: 0.6
-    - _FleshSmoothness: 0.855
-    - _MaskResolution: 2048
-    - _SkinNormalScale: 0.1
-    - _SkinSmoothness: 0.55
-    - _Threshold: 0.5
-    m_Colors:
-    - _FleshColor: {r: 1, g: 0.90000004, b: 0.39999998, a: 1}
-    - _SkinColor: {r: 1, g: 0.7, b: 0.7020979, a: 1}
+    m_Floats: []
+    m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
