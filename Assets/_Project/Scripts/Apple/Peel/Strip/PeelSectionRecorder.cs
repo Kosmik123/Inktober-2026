@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Inktober.Apple.Peel
 {
@@ -18,6 +19,9 @@ namespace Inktober.Apple.Peel
         private int samples;
         private float lastDistance;
         private bool hasSection;
+        private Vector3 lastPosition;
+        private Vector3 lastChord;
+        private bool hasLastChord;
 
         /// <param name="spacing">Peel length between two sections, in world units.</param>
         /// <param name="ignoredTailLength">See <see cref="PeelEnclosure.TryMeasure"/>.</param>
@@ -53,7 +57,7 @@ namespace Inktober.Apple.Peel
                 return false;
 
             PeelStripWidth.Edges(coverLeftSum / samples, coverRightSum / samples, width, out float leftEdge, out float rightEdge);
-            section = new PeelSection(length, leftEdge, rightEdge);
+            section = new PeelSection(length, leftEdge, rightEdge, MeasureTurn(points[points.Count - 1]));
 
             coverLeftSum = 0f;
             coverRightSum = 0f;
@@ -71,6 +75,31 @@ namespace Inktober.Apple.Peel
             samples = 0;
             lastDistance = 0f;
             hasSection = false;
+            hasLastChord = false;
+        }
+
+        /// <summary>
+        /// The turn of the path since the previous section: the angle between the chords (the straight lines between the points
+        /// of two neighbouring sections), measured along the surface at the newest point. The chord is a few centimetres long,
+        /// so the small zigzag of single points does not count as turning.
+        /// </summary>
+        private float MeasureTurn(PeelPoint newest)
+        {
+            var chord = Vector3.ProjectOnPlane(newest.Position - lastPosition, newest.Normal);
+            bool hasChord = hasSection && chord.sqrMagnitude > 1e-12f;
+            float turn = 0f;
+
+            if (hasChord && hasLastChord)
+                turn = Vector3.SignedAngle(lastChord, chord, newest.Normal);
+
+            if (hasChord)
+            {
+                lastChord = chord;
+                hasLastChord = true;
+            }
+
+            lastPosition = newest.Position;
+            return turn;
         }
     }
 }

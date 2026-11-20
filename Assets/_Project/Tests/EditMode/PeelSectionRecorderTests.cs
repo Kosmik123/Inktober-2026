@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Inktober.Apple.Peel;
 using NUnit.Framework;
 using UnityEngine;
@@ -133,6 +134,59 @@ namespace Inktober.Tests.EditMode
 
             // Half of the samples cover 0.03 on the left, the other half cover nothing.
             Assert.That(section.LeftEdge, Is.EqualTo(-Width * 0.5f + Width * 0.25f).Within(Tolerance));
+        }
+
+        // The knife goes 0.3 along +Z and then 0.3 along the given direction, in steps of 0.01, and the turns of all sections are collected.
+        private static List<float> TurnsAlongBendTowards(Vector3 secondDirection)
+        {
+            var recorder = NewRecorder();
+            var points = new List<PeelPoint>();
+            var turns = new List<float>();
+            var position = Vector3.zero;
+            float length = 0f;
+
+            for (int i = 0; i < 60; i++)
+            {
+                var direction = i < 30 ? Vector3.forward : secondDirection;
+                if (i > 0)
+                {
+                    position += direction * 0.01f;
+                    length += 0.01f;
+                }
+
+                points.Add(new PeelPoint(position, Vector3.up, direction));
+                if (recorder.TryRecord(points, length, Width, 1f, out var section))
+                    turns.Add(section.Turn);
+            }
+
+            return turns;
+        }
+
+        [Test]
+        public void ASectionOnAStraightPath_HasNoTurn()
+        {
+            var turns = TurnsAlongBendTowards(Vector3.forward);
+
+            Assert.That(turns.Count, Is.GreaterThan(5));
+            Assert.That(turns.Sum(), Is.EqualTo(0f).Within(0.01f));
+        }
+
+        [Test]
+        public void ABendToTheRight_TurnsRightByTheAngleOfTheBend()
+        {
+            var turns = TurnsAlongBendTowards(Vector3.right);
+
+            Assert.That(turns.Sum(), Is.EqualTo(90f).Within(0.5f));
+            Assert.That(turns.Min(), Is.GreaterThan(-0.01f));
+        }
+
+        [Test]
+        public void ABendToTheLeft_TurnsLeftByTheAngleOfTheBend()
+        {
+            var turns = TurnsAlongBendTowards(Vector3.left);
+
+            Assert.That(turns.Sum(), Is.EqualTo(-90f).Within(0.5f));
+            Assert.That(turns.Max(), Is.LessThan(0.01f));
         }
 
         [Test]

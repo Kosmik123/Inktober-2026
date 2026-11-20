@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 492209895562745950}
   - component: {fileID: 6557476199478400715}
   - component: {fileID: 7455787111872631737}
-  - component: {fileID: 7631647346262935147}
   - component: {fileID: 6981731077111138194}
+  - component: {fileID: 281033619397206918}
   m_Layer: 0
   m_Name: Peel Strip
   m_TagString: Untagged
@@ -92,18 +92,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7631647346262935147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6852771416005198429}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c7d3f7ea8bf1064ea3e4779f9197e31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Inktober::Inktober.Apple.Peel.StraightPeelStripPath
 --- !u!114 &6981731077111138194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118,3 +106,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Inktober::Inktober.Apple.Peel.PeelStripMesh
   profile: {fileID: 0}
   maxSections: 4000
+--- !u!114 &281033619397206918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6852771416005198429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca2c6e4fcf2dc734cb5b53ac3a4afdbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Inktober::Inktober.Apple.Peel.CurvedPeelStripPath
+  turnScale: 1
+  climb: 0.02

@@ -6,11 +6,12 @@ namespace Inktober.Apple.Peel
     /// </summary>
     public readonly struct PeelSection
     {
-        public PeelSection(float distance, float leftEdge, float rightEdge)
+        public PeelSection(float distance, float leftEdge, float rightEdge, float turn = 0f)
         {
             Distance = distance;
             LeftEdge = leftEdge;
             RightEdge = rightEdge;
+            Turn = turn;
         }
 
         /// <summary>Length of the peel at the section, in world units.</summary>
@@ -21,6 +22,9 @@ namespace Inktober.Apple.Peel
 
         /// <summary>Offset of the right edge of the strip from the centre line, in world units.</summary>
         public float RightEdge { get; }
+
+        /// <summary>How far the knife path turned since the previous section, in degrees along the surface. Positive turns right.</summary>
+        public float Turn { get; }
 
         /// <summary>Width of the strip at the section, in world units.</summary>
         public float Width => RightEdge - LeftEdge;
