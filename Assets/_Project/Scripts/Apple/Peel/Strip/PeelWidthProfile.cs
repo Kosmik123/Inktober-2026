@@ -58,7 +58,24 @@ namespace Inktober2026.Apple.Peel
             trail.OnCleared += PeelTrail_OnCleared;
         }
 
-        private void OnDisable()
+		private void PeelTrail_OnPointAdded(PeelPoint point)
+		{
+			float scale = Mathf.Abs(trail.Surface.lossyScale.x);
+			if (recorder.TryRecord(trail.Points, trail.Length, trail.Width, scale, out var section) == false)
+				return;
+
+			sections.Add(section);
+			OnSectionAdded?.Invoke(section);
+		}
+
+		private void PeelTrail_OnCleared()
+		{
+			sections.Clear();
+			recorder.Clear();
+			OnCleared?.Invoke();
+		}
+
+		private void OnDisable()
         {
             if (trail == null)
                 return;
@@ -67,22 +84,6 @@ namespace Inktober2026.Apple.Peel
             trail.OnCleared -= PeelTrail_OnCleared;
         }
 
-        private void PeelTrail_OnPointAdded(PeelPoint point)
-        {
-            float scale = Mathf.Abs(trail.Surface.lossyScale.x);
-            if (recorder.TryRecord(trail.Points, trail.Length, trail.Width, scale, out var section) == false)
-                return;
-
-            sections.Add(section);
-            OnSectionAdded?.Invoke(section);
-        }
-
-        private void PeelTrail_OnCleared()
-        {
-            sections.Clear();
-            recorder.Clear();
-            OnCleared?.Invoke();
-        }
 
         private void OnValidate()
         {
