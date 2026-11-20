@@ -90,8 +90,6 @@ namespace Inktober2026.Apple.Peel
 			var pivot = lastNode.Position;
 			float angle = Vector3.SignedAngle(Vector3.right, lastNode.Right, lastNode.Up);
 
-			Debug.Log("Last section turn is " + profile.Sections[profile.Sections.Count - 1].Turn);
-			Debug.Log("Right is " + lastNode.Right + ", up is " + lastNode.Up + ", angle is " + angle);
 			
 			for (int i = 0; i < path.NodeCount; i++)
 			{
@@ -101,7 +99,6 @@ namespace Inktober2026.Apple.Peel
 					rotation * (node.Position - pivot), 
 					rotation * node.Right,
 					rotation * node.Up);
-				Debug.Log($"Node {i}: position {node.Position}, right {node.Right}, up {node.Up}");
 				geometry.Append(profile.Sections[i], rotatedNode);
 			}
 
