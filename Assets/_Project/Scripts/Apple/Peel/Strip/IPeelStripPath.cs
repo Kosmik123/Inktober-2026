@@ -1,4 +1,4 @@
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Strategy that decides where the strip is in space. The width of the strip comes from <see cref="PeelWidthProfile"/>,

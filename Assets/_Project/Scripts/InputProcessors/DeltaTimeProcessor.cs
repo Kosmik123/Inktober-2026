@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEditor;
 #endif
 
-namespace Inktober.InputProcessors
+namespace Inktober2026.InputProcessors
 {
     /// <summary>
     /// Multiplies a Vector2 by <see cref="Time.deltaTime"/>, turning a rate (units per second, for example a stick)

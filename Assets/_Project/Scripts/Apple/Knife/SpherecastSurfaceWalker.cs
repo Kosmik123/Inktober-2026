@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Knife
+namespace Inktober2026.Apple.Knife
 {
     /// <summary>
     /// Surface walker that steps along the tangent and snaps back to the surface with a ray,

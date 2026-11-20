@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Finds out whether the newest segment of the peel trail crosses an older one. The trail has no thickness: it is a line,

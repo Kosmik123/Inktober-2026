@@ -1,8 +1,8 @@
-using Inktober.Apple.Peel;
+using Inktober2026.Apple.Peel;
 using TMPro;
 using UnityEngine;
 
-namespace Inktober.UI
+namespace Inktober2026.UI
 {
     /// <summary>
     /// Shows the current peel length (the score) in a text label.

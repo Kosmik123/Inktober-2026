@@ -1,7 +1,7 @@
 using Bipolar.TouchSticks;
 using UnityEngine;
 
-namespace Inktober.Game
+namespace Inktober2026.Game
 {
     /// <summary>
     /// Starts the round on touch devices when the player moves the steering stick out of its dead zone,

@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Inktober.Tests.EditMode
+namespace Inktober2026.Tests.EditMode
 {
     /// <summary>
     /// Checks the shape of the PeelMaskBrush shader. The "apple" is a flat square: positions (x, y, height) and UV (x, y) with x, y in 0..1,

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>Where the centre line of the strip is at one section and how the strip is turned there, in the local space of the strip object.</summary>
     public readonly struct PeelStripNode

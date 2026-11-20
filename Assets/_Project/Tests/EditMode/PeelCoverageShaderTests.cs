@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Inktober.Tests.EditMode
+namespace Inktober2026.Tests.EditMode
 {
     /// <summary>
     /// Checks the PeelCoverageDownsample shader on masks with a known peeled share. Needs a graphics device.

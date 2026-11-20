@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Inktober.Apple.Knife
+namespace Inktober2026.Apple.Knife
 {
     /// <summary>
     /// Keeps the surface in place and spins it under the knife at a constant angular speed (see <see cref="KnifeSpin"/>).

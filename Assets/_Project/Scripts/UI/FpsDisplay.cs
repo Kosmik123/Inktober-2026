@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Inktober.UI
+namespace Inktober2026.UI
 {
     /// <summary>
     /// Shows the frame rate in the text label on the same object, for checking performance on devices.

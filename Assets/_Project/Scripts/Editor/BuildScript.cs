@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace Inktober.Editor
+namespace Inktober2026.Editor
 {
     /// <summary>
     /// Builds the game from the command line (Unity batch mode), for example:

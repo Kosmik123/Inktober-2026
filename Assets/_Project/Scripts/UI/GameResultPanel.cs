@@ -1,10 +1,10 @@
 using System.Text;
-using Inktober.Apple.Peel;
-using Inktober.Game;
+using Inktober2026.Apple.Peel;
+using Inktober2026.Game;
 using TMPro;
 using UnityEngine;
 
-namespace Inktober.UI
+namespace Inktober2026.UI
 {
     /// <summary>
     /// Shows the result of the round after game over: peel length, how much of the apple is peeled and the best length.

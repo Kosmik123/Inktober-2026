@@ -1,8 +1,8 @@
-using Inktober.Apple.Peel;
+using Inktober2026.Apple.Peel;
 using TMPro;
 using UnityEngine;
 
-namespace Inktober.UI
+namespace Inktober2026.UI
 {
     /// <summary>
     /// Shows how much of the apple is peeled, as a percentage, in the text label on the same object.

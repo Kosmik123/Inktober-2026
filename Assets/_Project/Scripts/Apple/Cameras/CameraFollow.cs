@@ -1,7 +1,7 @@
-using Inktober.Apple.Knife;
+using Inktober2026.Apple.Knife;
 using UnityEngine;
 
-namespace Inktober.Apple.Cameras
+namespace Inktober2026.Apple.Cameras
 {
 	/// <summary>
 	/// Keeps the camera behind the target, in the target's local space.

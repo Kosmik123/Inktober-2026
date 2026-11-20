@@ -1,8 +1,8 @@
-using Inktober.InputProcessors;
+using Inktober2026.InputProcessors;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Inktober.Tests.EditMode
+namespace Inktober2026.Tests.EditMode
 {
     public class DeltaTimeProcessorTests
     {

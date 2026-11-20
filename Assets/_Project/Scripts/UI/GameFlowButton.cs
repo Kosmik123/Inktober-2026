@@ -1,10 +1,10 @@
 using Bipolar.TouchSticks;
-using Inktober.Game;
+using Inktober2026.Game;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Inktober.UI
+namespace Inktober2026.UI
 {
     /// <summary>
     /// A button that confirms in <see cref="GameFlow"/> (start, resume, restart), for devices without a keyboard.

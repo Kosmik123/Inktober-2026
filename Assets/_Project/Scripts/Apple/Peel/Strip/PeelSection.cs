@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// One cross section of the peeled strip: how far along the strip it is and where its edges are across the knife path.

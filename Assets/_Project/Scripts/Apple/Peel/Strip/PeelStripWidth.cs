@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// How wide the strip peeled by the newest point is. The brush paints a band of <c>width</c> around the knife path,

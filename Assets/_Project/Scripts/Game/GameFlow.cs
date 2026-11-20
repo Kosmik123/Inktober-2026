@@ -1,12 +1,12 @@
 using System;
 using Bipolar.TouchSticks;
-using Inktober.Apple.Knife;
-using Inktober.Apple.Peel;
+using Inktober2026.Apple.Knife;
+using Inktober2026.Apple.Peel;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-namespace Inktober.Game
+namespace Inktober2026.Game
 {
 	public enum GameState
 	{

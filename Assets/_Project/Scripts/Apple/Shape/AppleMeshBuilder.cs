@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Inktober.Apple.Shape
+namespace Inktober2026.Apple.Shape
 {
     /// <summary>
     /// Builds the mesh of the apple: a UV sphere deformed by <see cref="AppleShapeSettings"/> and a seed.

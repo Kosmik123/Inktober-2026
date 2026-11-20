@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Inktober.Apple.Knife;
+using Inktober2026.Apple.Knife;
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Records where the knife has been as points in the local space of the peeled object.

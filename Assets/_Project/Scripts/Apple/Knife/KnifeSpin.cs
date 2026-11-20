@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Knife
+namespace Inktober2026.Apple.Knife
 {
     /// <summary>
     /// Spins the surface under the knife like an apple on a lathe: by a fixed angle around the axis across the knife

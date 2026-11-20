@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Raises <see cref="OnEnclosed"/> when the knife has been cutting between two older lines for a while, so no new peel is made.

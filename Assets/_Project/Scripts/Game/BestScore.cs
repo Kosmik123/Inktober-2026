@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Game
+namespace Inktober2026.Game
 {
     /// <summary>
     /// The longest peel ever made, in world units, kept in PlayerPrefs (in WebGL they live in the browser storage).

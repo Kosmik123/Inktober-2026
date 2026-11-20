@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Knife
+namespace Inktober2026.Apple.Knife
 {
     /// <summary>
     /// Lets the knife rest on its whole blade instead of on a single point: the surface is sampled on a grid

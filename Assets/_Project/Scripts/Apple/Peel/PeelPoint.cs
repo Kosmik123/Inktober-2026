@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>One sample of the knife path, in the local space of the peeled object (it moves and turns with the apple).</summary>
     public readonly struct PeelPoint

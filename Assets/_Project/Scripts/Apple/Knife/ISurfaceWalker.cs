@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Knife
+namespace Inktober2026.Apple.Knife
 {
     /// <summary>
     /// Strategy that moves a point across the surface of an object.

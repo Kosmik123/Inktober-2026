@@ -1,7 +1,7 @@
-using Inktober.Apple.Peel;
+using Inktober2026.Apple.Peel;
 using NUnit.Framework;
 
-namespace Inktober.Tests.EditMode
+namespace Inktober2026.Tests.EditMode
 {
     public class PeelStripWidthTests
     {

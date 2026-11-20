@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Knife
+namespace Inktober2026.Apple.Knife
 {
     /// <summary>Frame-rate independent exponential follow of a pose, so the knife eases towards where the surface wants it.</summary>
     public static class KnifePoseSmoother

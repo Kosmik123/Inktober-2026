@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Cameras
+namespace Inktober2026.Cameras
 {
     /// <summary>
     /// Keeps a camera's field of view wide enough to satisfy both a minimum horizontal

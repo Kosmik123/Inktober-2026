@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Inktober.Apple.Shape;
+using Inktober2026.Apple.Shape;
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Turns the stream of trail points into cross sections of the peeled strip, one for every <c>spacing</c> of peel length.

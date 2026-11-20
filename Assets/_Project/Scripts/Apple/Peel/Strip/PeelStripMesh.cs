@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
 	/// <summary>
 	/// Builds the mesh of the peeled strip from the sections of a <see cref="PeelWidthProfile"/> and places them with the
@@ -8,7 +8,7 @@ namespace Inktober.Apple.Peel
 	/// frame for a dynamic path, a simulation). The pivot of the object is always at the newest section: the vertices are
 	/// shifted so that the last node is at the origin, and the object is moved the other way, so the strip does not move in the world.
 	/// </summary>
-	[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+	[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(IPeelStripPath))]
 	public class PeelStripMesh : MonoBehaviour
 	{
 		[SerializeField]
@@ -23,20 +23,17 @@ namespace Inktober.Apple.Peel
 		private Mesh mesh;
 		private bool isDirty;
 		private bool needsRebuild;
-		private Vector3 restLocalPosition;
-		private Quaternion restLocalRotation;
 
 		private void Awake()
 		{
-			if (TryGetComponent(out path))
+			path = GetComponent<IPeelStripPath>();
+			if (path == null)
 			{
 				Debug.LogError($"{nameof(PeelStripMesh)} needs a component implementing {nameof(IPeelStripPath)} on the same object.", this);
 				enabled = false;
 				return;
 			}
 
-			restLocalPosition = transform.localPosition;
-			restLocalRotation = transform.localRotation;
 			geometry = new PeelStripGeometry();
 			mesh = new Mesh { name = "Peel Strip" };
 			mesh.hideFlags = HideFlags.HideAndDontSave;

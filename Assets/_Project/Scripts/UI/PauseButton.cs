@@ -1,9 +1,9 @@
 using Bipolar.TouchSticks;
-using Inktober.Game;
+using Inktober2026.Game;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Inktober.UI
+namespace Inktober2026.UI
 {
     /// <summary>
     /// A button that pauses the round on touch devices. It is shown only while the round is being played

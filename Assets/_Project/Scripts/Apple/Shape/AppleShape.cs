@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Shape
+namespace Inktober2026.Apple.Shape
 {
     /// <summary>
     /// Gives the apple its shape: generates the mesh (a sphere with a wider shoulder, dimples at the poles and a random unevenness)

@@ -1,9 +1,9 @@
-using Inktober.Apple.Knife;
-using Inktober.Apple.Shape;
+using Inktober2026.Apple.Knife;
+using Inktober2026.Apple.Shape;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Inktober.Tests.EditMode
+namespace Inktober2026.Tests.EditMode
 {
     public class KnifeSpinTests
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Inktober.Apple.Shape
+namespace Inktober2026.Apple.Shape
 {
     /// <summary>
     /// Where a point of the apple lies on its textures. The apple is mapped like the default Unity sphere

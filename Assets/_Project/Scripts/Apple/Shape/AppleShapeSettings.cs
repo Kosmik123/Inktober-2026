@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Inktober.Apple.Shape
+namespace Inktober2026.Apple.Shape
 {
     /// <summary>
     /// Describes the shape of the apple as a deformation of a sphere: the radius in every direction is the base radius

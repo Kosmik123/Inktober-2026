@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Raises <see cref="OnSelfIntersection"/> when the newest segment of the <see cref="PeelTrail"/> crosses an older one.

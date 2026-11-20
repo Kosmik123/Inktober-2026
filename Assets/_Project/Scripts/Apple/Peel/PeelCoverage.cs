@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Measures how much of the apple is peeled: the average value of the <see cref="PeelMask"/> texture (0 to 1).

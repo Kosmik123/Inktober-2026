@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Inktober.Apple.Peel
+namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Builds the mesh that paints the peel mask: the apple mesh drawn "unwrapped" (every vertex lands where its UV is), with every
