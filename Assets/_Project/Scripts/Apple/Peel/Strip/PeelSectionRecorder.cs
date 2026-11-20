@@ -51,8 +51,8 @@ namespace Inktober2026.Apple.Peel
 
             if (PeelEnclosure.TryMeasure(points, scale, ignoredTailLength, heightTolerance, out float left, out float right))
             {
-                coverLeftSum += PeelStripWidth.Cover(left, width);
-                coverRightSum += PeelStripWidth.Cover(right, width);
+                coverLeftSum += PeelStripWidthUtility.Cover(left, width);
+                coverRightSum += PeelStripWidthUtility.Cover(right, width);
             }
 
             samples++;
@@ -60,7 +60,7 @@ namespace Inktober2026.Apple.Peel
             if (hasSection && length - lastDistance < spacing)
                 return false;
 
-            PeelStripWidth.Edges(coverLeftSum / samples, coverRightSum / samples, width, out float leftEdge, out float rightEdge);
+            PeelStripWidthUtility.Edges(coverLeftSum / samples, coverRightSum / samples, width, out float leftEdge, out float rightEdge);
 
             var newest = points[points.Count - 1];
             float turn = MeasureTurn(newest);

@@ -7,7 +7,7 @@ namespace Inktober2026.Apple.Peel
     /// so an older line at distance <c>d</c> (between the centres of the two bands) has already peeled <c>width - d</c> of it.
     /// What is left of the band is the new strip. The distances come from <see cref="PeelEnclosure.TryMeasure"/>.
     /// </summary>
-    public static class PeelStripWidth
+    public static class PeelStripWidthUtility
     {
         /// <summary>
         /// How much of the band of the newest point the nearest older line on one side has peeled before, from 0 to <paramref name="width"/>.

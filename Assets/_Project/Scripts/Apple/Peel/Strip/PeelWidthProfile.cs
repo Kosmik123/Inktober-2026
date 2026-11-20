@@ -8,7 +8,7 @@ namespace Inktober2026.Apple.Peel
     /// Follows the trail and keeps the width of the peeled strip as a list of cross sections, one every few centimetres of peel.
     /// The strip is not the knife path: the knife peels only what is not peeled yet, so the strip is narrower where the path
     /// runs along an older line. This is only data, drawing and moving the strip is a separate concern.
-    /// See <see cref="PeelStripWidth"/> for the width.
+    /// See <see cref="PeelStripWidthUtility"/> for the width.
     /// </summary>
     public class PeelWidthProfile : MonoBehaviour
     {
