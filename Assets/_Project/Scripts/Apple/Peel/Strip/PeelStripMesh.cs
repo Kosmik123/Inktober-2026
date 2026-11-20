@@ -4,8 +4,9 @@ namespace Inktober.Apple.Peel
 {
     /// <summary>
     /// Builds the mesh of the peeled strip from the sections of a <see cref="PeelWidthProfile"/> and places them with the
-    /// <see cref="IPeelStripPath"/> on the same object. The mesh grows with the strip. With a static path it only adds
-    /// vertices, with a dynamic one (a simulation) it rewrites them every frame.
+    /// <see cref="IPeelStripPath"/> on the same object. The mesh grows with the strip and is rebuilt when it does (or every
+    /// frame for a dynamic path, a simulation). The pivot of the object is always at the newest section: the vertices are
+    /// shifted so that the last node is at the origin, and the object is moved the other way, so the strip does not move in the world.
     /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class PeelStripMesh : MonoBehaviour
@@ -21,6 +22,9 @@ namespace Inktober.Apple.Peel
         private PeelStripGeometry geometry;
         private Mesh mesh;
         private bool isDirty;
+        private bool needsRebuild;
+        private Vector3 restLocalPosition;
+        private Quaternion restLocalRotation;
 
         private void Awake()
         {
@@ -32,6 +36,8 @@ namespace Inktober.Apple.Peel
                 return;
             }
 
+            restLocalPosition = transform.localPosition;
+            restLocalRotation = transform.localRotation;
             geometry = new PeelStripGeometry();
             mesh = new Mesh { name = "Peel Strip" };
             mesh.hideFlags = HideFlags.HideAndDontSave;
@@ -57,7 +63,7 @@ namespace Inktober.Apple.Peel
 
         private void LateUpdate()
         {
-            if (path.IsDynamic)
+            if (path.IsDynamic || needsRebuild)
                 Rebuild();
 
             if (isDirty == false)
@@ -88,25 +94,37 @@ namespace Inktober.Apple.Peel
                 return;
 
             path.Append(section);
-            if (path.IsDynamic)
-                return;
-
-            geometry.Append(section, path.GetNode(path.NodeCount - 1));
-            isDirty = true;
+            needsRebuild = true;
         }
 
         private void PeelWidthProfile_OnCleared()
         {
             path.Clear();
             geometry.Clear();
+            transform.localPosition = restLocalPosition;
+            needsRebuild = false;
             isDirty = true;
         }
 
         private void Rebuild()
         {
+            needsRebuild = false;
             geometry.Clear();
+            if (path.NodeCount == 0)
+            {
+                isDirty = true;
+                return;
+            }
+
+            // The nodes are in the frame the object had at the start, the last one becomes the pivot.
+            var pivot = path.GetNode(path.NodeCount - 1).Position;
+            transform.localPosition = restLocalPosition + restLocalRotation * Vector3.Scale(transform.localScale, pivot);
+
             for (int i = 0; i < path.NodeCount; i++)
-                geometry.Append(profile.Sections[i], path.GetNode(i));
+            {
+                var node = path.GetNode(i);
+                geometry.Append(profile.Sections[i], new PeelStripNode(node.Position - pivot, node.Right, node.Up));
+            }
 
             isDirty = true;
         }
