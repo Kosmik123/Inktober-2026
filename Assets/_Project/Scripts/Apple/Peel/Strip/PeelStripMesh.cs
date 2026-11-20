@@ -96,10 +96,13 @@ namespace Inktober2026.Apple.Peel
 			for (int i = 0; i < path.NodeCount; i++)
 			{
 				var node = path.GetNode(i);
-				Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-				var nodePosition = rotation * (node.Position - pivot);
+				var rotation = Quaternion.AngleAxis(-angle, lastNode.Up);
+				var rotatedNode = new PeelStripNode(
+					rotation * (node.Position - pivot), 
+					rotation * node.Right,
+					rotation * node.Up);
 				Debug.Log($"Node {i}: position {node.Position}, right {node.Right}, up {node.Up}");
-				geometry.Append(profile.Sections[i], new PeelStripNode(nodePosition, node.Right, node.Up));
+				geometry.Append(profile.Sections[i], rotatedNode);
 			}
 
 			isDirty = true;
