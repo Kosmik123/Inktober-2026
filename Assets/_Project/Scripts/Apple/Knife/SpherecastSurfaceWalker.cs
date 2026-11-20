@@ -66,6 +66,24 @@ namespace Inktober.Apple.Knife
             return true;
         }
 
+        public bool Follow(Vector3 origin, Vector3 direction, Vector3 forwardHint, float travelled)
+        {
+            if (TrySample(origin, direction.normalized, Mathf.Infinity, out var point, out var normal) == false)
+            {
+                isOnSurface = false;
+                return false;
+            }
+
+            float blend = 1f - Mathf.Exp(-normalSmoothing * travelled);
+
+            position = point;
+            surfaceNormal = normal;
+            smoothedNormal = isOnSurface ? Vector3.Slerp(smoothedNormal, normal, blend).normalized : normal;
+            forward = ProjectOnSurface(forwardHint, normal);
+            isOnSurface = true;
+            return true;
+        }
+
         public void Turn(float degrees)
         {
             if (isOnSurface == false)

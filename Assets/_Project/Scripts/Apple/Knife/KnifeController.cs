@@ -4,15 +4,14 @@ using UnityEngine.InputSystem;
 namespace Inktober.Apple.Knife
 {
     /// <summary>
-    /// Keeps the surface in place and turns it under the knife: the walker finds where the knife would be
-    /// next, then the surface is rotated around its center so that point comes back under the knife
-    /// (see <see cref="KnifeSurfaceAligner"/>). The knife only slides away from or towards the center and tilts to the surface.
-    /// Constant speed, the Steer action turns.
-    /// The way the knife sticks to the surface is a strategy, any <see cref="ISurfaceWalker"/> on the same object.
+    /// Keeps the surface in place and spins it under the knife at a constant angular speed (see <see cref="KnifeSpin"/>).
+    /// The Steer action turns the path. The knife only slides away from or towards the center and tilts to the surface.
+    /// The way the contact point is read is a strategy, any <see cref="ISurfaceWalker"/> on the same object.
     /// </summary>
     public class KnifeController : MonoBehaviour
     {
         private const float MaxDeltaTime = 0.05f;
+        private const float ReachMargin = 0.2f;
 
         [SerializeField]
         private InputActionReference steerAction;
@@ -22,7 +21,7 @@ namespace Inktober.Apple.Knife
         private Transform surface;
 
         [Header("Movement")]
-        [Tooltip("Travel speed along the surface, in units per second.")]
+        [Tooltip("Travel speed along the surface at the average radius of the surface, in units per second. The surface spins at a constant angular speed, so the real speed follows the radius.")]
         [SerializeField]
         private float speed = 0.8f;
         public float Speed
@@ -56,6 +55,8 @@ namespace Inktober.Apple.Knife
         private Collider surfaceCollider;
         private Vector3 homeDirection;
         private Vector3 heading;
+        private float referenceRadius;
+        private float reach;
         private Pose pose;
 
         private void Awake()
@@ -93,6 +94,10 @@ namespace Inktober.Apple.Knife
 
             surfaceCollider = surface.GetComponentInChildren<Collider>();
             pose = new Pose(transform.position, transform.rotation);
+
+            var extents = surfaceCollider ? surfaceCollider.bounds.extents : Vector3.one * (transform.position - surface.position).magnitude;
+            referenceRadius = Mathf.Max(0.01f, (extents.x + extents.y + extents.z) / 3f);
+            reach = extents.magnitude + ReachMargin;
         }
 
         private void Update()
@@ -102,12 +107,11 @@ namespace Inktober.Apple.Knife
                 return;
 
             float limit = maxTurnRate * deltaTime;
-            float degrees = Mathf.Clamp(ReadTurnDegrees(), -limit, limit);
-            turnRate = degrees / deltaTime;
+            float yaw = Mathf.Clamp(ReadTurnDegrees(), -limit, limit);
+            turnRate = yaw / deltaTime;
 
-            walker.Turn(degrees);
-            walker.Advance(speed * deltaTime);
-            KnifeSurfaceAligner.Apply(walker, surface, homeDirection, heading);
+            float pitch = speed / referenceRadius * Mathf.Rad2Deg * deltaTime;
+            KnifeSpin.Apply(walker, surface, homeDirection, heading, pitch, yaw, reach);
             PlaceKnife(deltaTime);
         }
 

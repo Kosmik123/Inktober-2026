@@ -23,6 +23,12 @@ namespace Inktober.Apple.Knife
         /// <summary>Puts the walker on the first surface hit from <paramref name="origin"/> along <paramref name="direction"/>.</summary>
         bool Place(Vector3 origin, Vector3 direction, Vector3 forwardHint);
 
+        /// <summary>
+        /// Puts the walker on the first surface hit from <paramref name="origin"/> along <paramref name="direction"/>, keeping the smoothed normal.
+        /// <paramref name="travelled"/> is the distance covered along the surface since the last call, it sets how fast the normal follows.
+        /// </summary>
+        bool Follow(Vector3 origin, Vector3 direction, Vector3 forwardHint, float travelled);
+
         /// <summary>Rotates the direction of travel around the surface normal. Positive turns right.</summary>
         void Turn(float degrees);
 

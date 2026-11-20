@@ -9,8 +9,8 @@ namespace Inktober.Tests.EditMode
     {
         private const float BladeLength = 0.12f;
         private const float BladeWidth = 0.06f;
-        private const float StepDistance = 0.8f / 60f;
         private const float DeltaTime = 1f / 60f;
+        private const float PitchDegrees = 0.8f / 0.5f * Mathf.Rad2Deg / 60f;
 
         private GameObject apple;
         private GameObject knife;
@@ -116,9 +116,7 @@ namespace Inktober.Tests.EditMode
 
             for (int i = 0; i < 1200; i++)
             {
-                walker.Turn(Mathf.Sin(i * 0.02f) * 2f);
-                walker.Advance(StepDistance);
-                KnifeSurfaceAligner.Apply(walker, surface, home, heading);
+                KnifeSpin.Apply(walker, surface, home, heading, PitchDegrees, Mathf.Sin(i * 0.02f) * 2f, 2f);
 
                 var rawTarget = new Pose(walker.Position, Quaternion.LookRotation(walker.Forward, walker.Normal));
                 var target = rawTarget;
