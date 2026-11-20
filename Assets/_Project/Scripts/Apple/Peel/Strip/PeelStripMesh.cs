@@ -85,12 +85,21 @@ namespace Inktober2026.Apple.Peel
 			}
 
 			// The nodes are in the frame the object had at the start, the last one becomes the pivot.
-			var pivot = path.GetNode(path.NodeCount - 1).Position;
 
+			var lastNode = path.GetNode(path.NodeCount - 1);
+			var pivot = lastNode.Position;
+			float angle = Vector3.SignedAngle(Vector3.right, lastNode.Right, lastNode.Up);
+
+			Debug.Log("Last section turn is " + profile.Sections[profile.Sections.Count - 1].Turn);
+			Debug.Log("Right is " + lastNode.Right + ", up is " + lastNode.Up + ", angle is " + angle);
+			
 			for (int i = 0; i < path.NodeCount; i++)
 			{
 				var node = path.GetNode(i);
-				geometry.Append(profile.Sections[i], new PeelStripNode(node.Position - pivot, node.Right, node.Up));
+				Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+				var nodePosition = rotation * (node.Position - pivot);
+				Debug.Log($"Node {i}: position {node.Position}, right {node.Right}, up {node.Up}");
+				geometry.Append(profile.Sections[i], new PeelStripNode(nodePosition, node.Right, node.Up));
 			}
 
 			isDirty = true;
