@@ -55,6 +55,7 @@ namespace Inktober2026.Game
 		public GameState State => state;
 
 		private float gameOverTime;
+		private bool cursorWasLocked;
 
 		private void Reset()
 		{
@@ -76,9 +77,15 @@ namespace Inktober2026.Game
 			SetState(GameState.Ready);
 		}
 
+		private void Update()
+		{
+			PauseWhenTheBrowserReleasesTheCursor();
+		}
+
 		private void SetState(GameState newState)
 		{
 			state = newState;
+			cursorWasLocked = false;
 			knife.enabled = newState == GameState.Playing;
 			ApplyCursor(newState == GameState.Playing);
 
@@ -96,9 +103,29 @@ namespace Inktober2026.Game
 			Cursor.visible = locked == false;
 		}
 
-		private void Restart()
+		/// <summary>Starts the round again by reloading the scene. Used after game over and by the restart button of the pause.</summary>
+		public void Restart()
 		{
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
+
+		// In a browser Esc releases the locked cursor and the game gets no key press, so the pause action does not fire.
+		// Losing a lock the game has had is taken as the player's wish to pause. Waiting for the lock first
+		// keeps the start of a round (the browser grants the lock a moment after the request) from pausing at once.
+		private void PauseWhenTheBrowserReleasesTheCursor()
+		{
+			if (state != GameState.Playing)
+				return;
+
+			bool locked = Cursor.lockState == CursorLockMode.Locked;
+			if (locked)
+			{
+				cursorWasLocked = true;
+				return;
+			}
+
+			if (cursorWasLocked)
+				SetState(GameState.Paused);
 		}
 
 		private void PeelSelfCollision_OnSelfIntersection(Vector3 crossingPoint)
