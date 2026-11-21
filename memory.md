@@ -17,6 +17,11 @@ Put here only what holds for all the games.
 - Write the decisions of the concept phase to the game's memory file (`<theme>-memory.md`) so they survive between sessions. Open questions go there as open items.
 - If the user's instruction is unclear or looks unfinished, ask instead of guessing and starting work.
 
+## Target platforms
+
+- We do not target mobile devices only. Usually a game is multiplatform (desktop and mobile, played in the browser from WebGL), so input, UI layout and performance must work on both.
+- Sometimes a game is made for PC only. Which one it is gets decided in the concept phase and written to the game's memory file. For a PC-only game the mobile-specific rules (touch input, the 750 units wide HUD, the phone performance budget) do not have to be followed.
+
 ## Repository and workflow
 
 - One game per daily theme. Branch prefix per theme: `<day>-<theme>/` (for example `1-apple/`, `2-relic/`), one feature per branch, e.g. `2-relic/<feature>`.
