@@ -1,6 +1,6 @@
 # Inktober 2026: shared memory
 
-General knowledge for every game of the series. It is merged to `master`.
+General knowledge for every game of the series. It is committed to `master` (by cherry-pick, see below).
 Facts that belong to one game only go to that game's memory file (see below), not here.
 
 ## Per-game memory
@@ -14,6 +14,7 @@ Put here only what holds for all the games.
 
 - One game per daily theme. Branch prefix per theme: `<day>-<theme>/` (for example `1-apple/`, `2-relic/`), one feature per branch, e.g. `2-relic/<feature>`.
 - `master` holds the shared things (every game branches from it). `<day>-<theme>/main` is the integration branch of a game.
+- **`master` is only a source for the games' branches. Nothing is merged into `master`.** A game's work stays on its own branches. The only thing that goes to `master`, and only as a **cherry-pick** of the specific commits, is what every game needs: a change in this `memory.md`, a submodule that other games will use too, or any other change that is required in all the games. Game-specific code, scenes and memory files never go to `master`.
 - **Merging is the agent's job**: the user works remotely by chat, so the agent merges finished feature branches into the integration branch (fast-forward with `git fetch . branch:<integration-branch>`). Nothing is pushed anywhere unless asked (the repo has no remote).
 - One persistent worktree per agent session, with its own open Unity Editor (avoids a full re-import). The user's main checkout is theirs: do not touch it.
 - Commits made by the agent are authored as the agent, never as the system git user (usually `Kosmik`): override per command, `git -c user.name="Claude" -c user.email="noreply@anthropic.com" commit ...`, never change git config. Keep the Co-Authored-By trailer.
