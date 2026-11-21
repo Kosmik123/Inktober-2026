@@ -1,17 +1,16 @@
 using System.Collections.Generic;
-using Inktober2026.Game;
 using UnityEngine;
 using UnityEngine.Audio;
 
 namespace Inktober2026.Audio
 {
 	/// <summary>
-	/// Plays the peel clip for as long as the round is on. The clip is short and is not a loop, so it is played again and again:
+	/// Keeps one short clip sounding without end. The clip is not a loop, so it is played again and again:
 	/// the next voice starts a random time before the previous one ends and fades in while the previous one fades out,
 	/// and the pitch of every voice wanders between a minimum and a maximum along Perlin noise, so the repetition is hard to notice.
-	/// A pause fades the sound out and holds it; game over and the ready state fade it out and stop it.
+	/// Knows nothing about the game: <see cref="Play"/>, <see cref="Pause"/> and <see cref="Stop"/> fade the whole sound in and out.
 	/// </summary>
-	public class PeelSound : MonoBehaviour
+	public class ContinuousAudio : MonoBehaviour
 	{
 		private const float PerlinLow = 0.2f;
 		private const float PerlinHigh = 0.8f;
@@ -25,9 +24,6 @@ namespace Inktober2026.Audio
 			public float FadeInDuration;
 			public bool NextStarted;
 		}
-
-		[SerializeField]
-		private GameFlow gameFlow;
 
 		[SerializeField]
 		private AudioClip clip;
@@ -58,24 +54,40 @@ namespace Inktober2026.Audio
 		[SerializeField]
 		private float maxOverlap = 2.5f;
 
-		[Tooltip("Time of the fade of the whole sound when the round pauses, ends or starts.")]
+		[Tooltip("Time of the fade of the whole sound after Play, Pause and Stop.")]
 		[SerializeField]
-		private float stateFadeDuration = 0.4f;
+		private float fadeDuration = 0.4f;
+
+		private enum Mode
+		{
+			Stopped,
+			Playing,
+			Paused,
+		}
 
 		private readonly List<Voice> voices = new List<Voice>();
 		private readonly Stack<AudioSource> freeSources = new Stack<AudioSource>();
 		private float master;
 		private bool voicesPaused;
+		private Mode mode;
 
-		private void Reset()
+		/// <summary>Starts the sound, or resumes it after <see cref="Pause"/>, with a fade in.</summary>
+		public void Play()
 		{
-			gameFlow = FindAnyObjectByType<GameFlow>();
+			mode = Mode.Playing;
 		}
 
-		private void Awake()
+		/// <summary>Fades the sound out and holds it where it is, so <see cref="Play"/> goes on from there.</summary>
+		public void Pause()
 		{
-			if (gameFlow == null)
-				gameFlow = FindAnyObjectByType<GameFlow>();
+			if (mode == Mode.Playing)
+				mode = Mode.Paused;
+		}
+
+		/// <summary>Fades the sound out and drops all voices, so <see cref="Play"/> starts from the beginning.</summary>
+		public void Stop()
+		{
+			mode = Mode.Stopped;
 		}
 
 		private void OnValidate()
@@ -86,15 +98,15 @@ namespace Inktober2026.Audio
 
 		private void Update()
 		{
-			if (clip == null || gameFlow == null)
+			if (clip == null)
 				return;
 
-			bool playing = gameFlow.State == GameState.Playing;
-			master = Mathf.MoveTowards(master, playing ? 1f : 0f, Time.unscaledDeltaTime / Mathf.Max(0.01f, stateFadeDuration));
+			bool playing = mode == Mode.Playing;
+			master = Mathf.MoveTowards(master, playing ? 1f : 0f, Time.unscaledDeltaTime / Mathf.Max(0.01f, fadeDuration));
 
 			if (playing == false && master <= 0f)
 			{
-				HoldOrStop(gameFlow.State == GameState.Paused);
+				HoldOrStop(mode == Mode.Paused);
 				return;
 			}
 
@@ -125,7 +137,7 @@ namespace Inktober2026.Audio
 					continue;
 				}
 
-				if (voice.NextStarted == false && remaining <= voice.Overlap && gameFlow.State == GameState.Playing)
+				if (voice.NextStarted == false && remaining <= voice.Overlap && mode == Mode.Playing)
 				{
 					voice.NextStarted = true;
 					StartVoice(voice.Overlap);
