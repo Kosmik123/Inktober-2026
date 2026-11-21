@@ -1,0 +1,18 @@
+{
+    "name": "Inktober2026.Editor",
+    "rootNamespace": "Inktober2026.Editor",
+    "references": [
+        "Inktober2026"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
