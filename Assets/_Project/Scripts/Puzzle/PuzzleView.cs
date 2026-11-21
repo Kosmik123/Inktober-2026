@@ -87,6 +87,14 @@ namespace Inktober2026.Puzzle
             pieceObjects.Clear();
         }
 
+        /// <summary>Finds the piece of the grid that a ray in the world hits first, through the cells of the grid.</summary>
+        public bool TryPick(Ray worldRay, ArrowGrid grid, out ArrowPiece piece)
+        {
+            var origin = transform.InverseTransformPoint(worldRay.origin) + (Vector3)grid.RelicCell;
+            var direction = transform.InverseTransformDirection(worldRay.direction);
+            return grid.TryRaycast(origin, direction, out piece);
+        }
+
         /// <summary>Takes the object of the piece away.</summary>
         public void Remove(ArrowPiece piece)
         {

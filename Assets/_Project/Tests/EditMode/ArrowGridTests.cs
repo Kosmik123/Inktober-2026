@@ -100,6 +100,60 @@ namespace Inktober2026.Tests.EditMode
         }
 
         [Test]
+        public void RaycastFindsTheFirstPieceOnTheLine()
+        {
+            var near = Piece(Vector3Int.up, new Vector3Int(1, 0, 0));
+            var far = Piece(Vector3Int.up, new Vector3Int(3, 0, 0));
+            grid.TryAdd(near);
+            grid.TryAdd(far);
+
+            Assert.IsTrue(grid.TryRaycast(new Vector3(-5f, 0f, 0f), Vector3.right, out var hit));
+            Assert.AreSame(near, hit);
+            Assert.IsTrue(grid.TryRaycast(new Vector3(9f, 0.2f, -0.3f), Vector3.left, out hit));
+            Assert.AreSame(far, hit);
+        }
+
+        [Test]
+        public void RaycastMissesWhenTheLineIsEmptyOrOutsideOfTheGrid()
+        {
+            grid.TryAdd(Piece(Vector3Int.up, new Vector3Int(1, 0, 0)));
+
+            Assert.IsFalse(grid.TryRaycast(new Vector3(-5f, 1f, 0f), Vector3.right, out _));
+            Assert.IsFalse(grid.TryRaycast(new Vector3(-5f, 10f, 0f), Vector3.right, out _));
+            Assert.IsFalse(grid.TryRaycast(new Vector3(-5f, 0f, 0f), Vector3.left, out _));
+            Assert.IsFalse(grid.TryRaycast(Vector3.zero, Vector3.zero, out _));
+        }
+
+        [Test]
+        public void RaycastStopsAtTheRelic()
+        {
+            var front = Piece(Vector3Int.up, new Vector3Int(0, 2, 2));
+            var behind = Piece(Vector3Int.up, new Vector3Int(4, 2, 2));
+            grid.TryAdd(behind);
+
+            Assert.IsFalse(grid.TryRaycast(new Vector3(-5f, 2f, 2f), Vector3.right, out _));
+
+            grid.TryAdd(front);
+
+            Assert.IsTrue(grid.TryRaycast(new Vector3(-5f, 2f, 2f), Vector3.right, out var hit));
+            Assert.AreSame(front, hit);
+        }
+
+        [Test]
+        public void RaycastWorksFromInsideAndAlongADiagonal()
+        {
+            var corner = Piece(Vector3Int.up, new Vector3Int(0, 0, 0));
+            var inside = Piece(Vector3Int.up, new Vector3Int(3, 3, 3));
+            grid.TryAdd(corner);
+            grid.TryAdd(inside);
+
+            Assert.IsTrue(grid.TryRaycast(new Vector3(-3f, -3f, -3f), Vector3.one, out var hit));
+            Assert.AreSame(corner, hit);
+            Assert.IsTrue(grid.TryRaycast(new Vector3(1f, 3f, 3f), Vector3.right, out hit));
+            Assert.AreSame(inside, hit);
+        }
+
+        [Test]
         public void RemovingAPieceRaisesTheEventOnce()
         {
             var piece = Piece(Vector3Int.right, new Vector3Int(0, 0, 0));

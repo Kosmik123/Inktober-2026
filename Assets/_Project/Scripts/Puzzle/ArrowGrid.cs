@@ -122,6 +122,52 @@ namespace Inktober2026.Puzzle
             return true;
         }
 
+        /// <summary>
+        /// Finds the first piece a line meets. The line is given in grid space, where the center of a cell is its integer position
+        /// and a cell reaches half a unit to every side. The relic is solid: the line stops there.
+        /// </summary>
+        public bool TryRaycast(Vector3 origin, Vector3 direction, out ArrowPiece piece)
+        {
+            piece = null;
+            if (direction == Vector3.zero || TryGetEntryDistance(origin, direction, out float entry) == false)
+                return false;
+
+            var position = origin + direction * entry;
+            var cell = new Vector3Int(
+                Mathf.Clamp(Mathf.RoundToInt(position.x), 0, Size.x - 1),
+                Mathf.Clamp(Mathf.RoundToInt(position.y), 0, Size.y - 1),
+                Mathf.Clamp(Mathf.RoundToInt(position.z), 0, Size.z - 1));
+
+            var step = new Vector3Int();
+            var nextCrossing = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+            var crossingInterval = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+            for (int axis = 0; axis < 3; axis++)
+            {
+                if (Mathf.Approximately(direction[axis], 0f))
+                    continue;
+
+                step[axis] = direction[axis] > 0f ? 1 : -1;
+                nextCrossing[axis] = (cell[axis] + 0.5f * step[axis] - position[axis]) / direction[axis];
+                crossingInterval[axis] = Mathf.Abs(1f / direction[axis]);
+            }
+
+            while (IsInside(cell))
+            {
+                if (cell == RelicCell)
+                    return false;
+
+                piece = occupancy[cell.x, cell.y, cell.z];
+                if (piece != null)
+                    return true;
+
+                int next = GetSmallestAxis(nextCrossing);
+                cell[next] += step[next];
+                nextCrossing[next] += crossingInterval[next];
+            }
+
+            return false;
+        }
+
         public bool CanRemove(ArrowPiece piece)
         {
             return IsRayClear(piece.Head + piece.Direction, piece.Direction, piece);
@@ -147,6 +193,44 @@ namespace Inktober2026.Puzzle
             }
 
             return copy.pieces.Count == 0;
+        }
+
+        /// <summary>Distance along the line (from 0) at which it enters the box of the whole grid.</summary>
+        private bool TryGetEntryDistance(Vector3 origin, Vector3 direction, out float entry)
+        {
+            float near = 0f;
+            float far = float.PositiveInfinity;
+            for (int axis = 0; axis < 3; axis++)
+            {
+                float min = -0.5f;
+                float max = Size[axis] - 0.5f;
+                if (Mathf.Approximately(direction[axis], 0f))
+                {
+                    if (origin[axis] < min || origin[axis] > max)
+                    {
+                        entry = 0f;
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                float a = (min - origin[axis]) / direction[axis];
+                float b = (max - origin[axis]) / direction[axis];
+                near = Mathf.Max(near, Mathf.Min(a, b));
+                far = Mathf.Min(far, Mathf.Max(a, b));
+            }
+
+            entry = near;
+            return near <= far;
+        }
+
+        private static int GetSmallestAxis(Vector3 values)
+        {
+            if (values.x <= values.y && values.x <= values.z)
+                return 0;
+
+            return values.y <= values.z ? 1 : 2;
         }
 
         public ArrowGrid Clone()
