@@ -1,6 +1,7 @@
 using Inktober2026.Cameras;
 using Inktober2026.Puzzle;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Inktober2026.Controls
@@ -53,6 +54,10 @@ namespace Inktober2026.Controls
         [SerializeField]
         private bool isDragging;
 
+        [Tooltip("The current press began on the interface, so the puzzle ignores it.")]
+        [SerializeField]
+        private bool isStartedOverUi;
+
         private float selectStartTime;
         private Vector2 selectStartPosition;
 
@@ -75,7 +80,7 @@ namespace Inktober2026.Controls
             if (isSelecting && isDragging == false)
                 isDragging = (positionAction.action.ReadValue<Vector2>() - selectStartPosition).magnitude > dragThreshold;
 
-            if (orbitAction.action.IsPressed() == false)
+            if (orbitAction.action.IsPressed() == false || isStartedOverUi)
                 return;
 
             // A finger presses select and orbit together, so it turns the view only once it is dragging.
@@ -87,6 +92,11 @@ namespace Inktober2026.Controls
 
         private void SelectAction_Started(InputAction.CallbackContext context)
         {
+            // A press on a button of the interface belongs to the button, not to the puzzle.
+            isStartedOverUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+            if (isStartedOverUi)
+                return;
+
             isSelecting = true;
             isDragging = false;
             selectStartTime = Time.unscaledTime;
@@ -95,6 +105,12 @@ namespace Inktober2026.Controls
 
         private void SelectAction_Canceled(InputAction.CallbackContext context)
         {
+            if (isStartedOverUi)
+            {
+                isStartedOverUi = false;
+                return;
+            }
+
             bool isTap = isSelecting && isDragging == false && Time.unscaledTime - selectStartTime <= maxTapDuration;
             isSelecting = false;
             isDragging = false;
@@ -118,6 +134,7 @@ namespace Inktober2026.Controls
             selectAction.action.canceled -= SelectAction_Canceled;
             isSelecting = false;
             isDragging = false;
+            isStartedOverUi = false;
         }
     }
 }

@@ -27,6 +27,10 @@ namespace Inktober2026.Puzzle
         [SerializeField]
         private Vector3Int size = new Vector3Int(5, 5, 5);
 
+        [Tooltip("The largest number of cells along an axis that SetSize accepts. Big grids take a long time to generate.")]
+        [SerializeField]
+        private int maxAxisSize = 12;
+
         [SerializeField]
         private int minLength = 3;
 
@@ -54,6 +58,9 @@ namespace Inktober2026.Puzzle
 
         public ArrowGrid Grid { get; private set; }
 
+        /// <summary>The number of cells along each axis that the next generated grid has.</summary>
+        public Vector3Int Size => size;
+
         private void Reset()
         {
             gameFlow = FindFirstObjectByType<GameFlow>();
@@ -62,6 +69,18 @@ namespace Inktober2026.Puzzle
         private void OnEnable()
         {
             gameFlow.OnStateChanged += GameFlow_OnStateChanged;
+        }
+
+        /// <summary>
+        /// Sets the size of the next generated grid, every axis kept between 1 and the maximum.
+        /// The grid that is shown now does not change until the round is set up again.
+        /// </summary>
+        public void SetSize(Vector3Int newSize)
+        {
+            size = new Vector3Int(
+                Mathf.Clamp(newSize.x, 1, maxAxisSize),
+                Mathf.Clamp(newSize.y, 1, maxAxisSize),
+                Mathf.Clamp(newSize.z, 1, maxAxisSize));
         }
 
         /// <summary>
