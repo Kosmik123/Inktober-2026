@@ -7,6 +7,10 @@ Specific to the Relic game. Shared knowledge is in `memory.md`.
 - Branch prefix `2-relic/`, integration branch `2-relic/main`.
 - itch.io page: https://kosmik123.itch.io/inktober-2026-relic (butler target `kosmik123/inktober-2026-relic`, channel `web`). The apple test page is not for this game. Build and push only when the user says so (as of 2026-11-21 the user said "not a deploy yet").
 
+## Deployed builds
+
+- 2026-11-21: `relic/test-ui` (commit 4883e4e) pushed to `kosmik123/inktober-2026-relic:web` (first build on that page, 12.7 MiB). Stone blocks, animations, size fields, new game button, canvas 1000x1000.
+
 ## Design decisions
 
 - 3D "arrows" puzzle in a 5x5x5 voxel volume (the size is set in the test UI). Bent snake-like pieces fill the volume, a golden relic cube sits in cell `size/2`. Clearing every piece reveals the relic.
