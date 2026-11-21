@@ -27,6 +27,10 @@ Specific to the Apple game. Shared knowledge is in `memory.md`.
 - Branch `1-apple/peel-strip-physics` (`427aab9`, based on an older develop, not merged, not deployed): `PeelChain` is a Verlet chain with the head pinned to the rest curve, gravity pushed a bit away from the apple, damping, a pull to the rest curve and a sphere (centre and radius of the apple) that pushes points out; `PhysicalPeelStripPath` runs it in a fixed step of 1/120 s; `PeelRestCurve` is the old curved path. 13 tests.
 - The user paused it on 2026-11-21: they saw that something was off and thinks damping is needed. They will iterate on it by hand before it is merged. The `apple` field of the path is still empty. Not checked on the phone: up to 4000 sections are rebuilt per frame.
 
+## Peel sound
+
+- `PeelSound` (prefab `Peel Sound`, in the scene) plays `apple_peel_long.wav` (a few seconds, not a loop) while `GameFlow` is Playing. Voices overlap: the next one starts a random min..max seconds before the previous ends, fades in (equal power, `LoopCrossfade`) while the previous fades out. Pitch of each voice wanders between min and max along Perlin noise. Pause holds the sound, Ready and GameOver stop it. Not yet heard on a device; the values are fields on the prefab.
+
 ## Open items
 
 - Sound and music: calm ASMR style, short realistic sounds (peel, cut, UI), one quiet melody that the user will find; the user may record the apple sounds or take CC0 ones, UI sounds can be generated in Python. Audio events come later.
