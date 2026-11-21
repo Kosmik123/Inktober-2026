@@ -161,6 +161,19 @@ namespace Inktober2026.Apple.Peel
             return delta.sqrMagnitude < 1e-12f ? fallback : delta.normalized;
         }
 
+        // The sphere the strip cannot enter: the apple itself and, a little wider, where the strip actually stays.
+        private void OnDrawGizmosSelected()
+        {
+            if (apple == null)
+                return;
+
+            float radius = appleRadius * apple.lossyScale.x;
+            Gizmos.color = new Color(1f, 0.6f, 0.1f, 0.6f);
+            Gizmos.DrawWireSphere(apple.position, radius);
+            Gizmos.color = new Color(1f, 0.9f, 0.2f, 0.3f);
+            Gizmos.DrawWireSphere(apple.position, radius + clearance);
+        }
+
         private void OnValidate()
         {
             gravity = Mathf.Max(0f, gravity);
