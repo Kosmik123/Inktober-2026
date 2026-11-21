@@ -26,7 +26,9 @@ Put here only what holds for all the games.
 - Phone test loop: build WebGL (`Inktober2026.Editor.BuildScript.BuildWebGL`, batch mode; confirm the log has `BuildScript: Succeeded` before pushing, otherwise butler uploads the stale output), then `butler push` to the itch.io page of that game. One itch.io page per game; pushing to a page the user did not name is not allowed, ask first. Do not deploy until the user says so.
 - Tag every deployed build with an annotated local git tag `<theme>/<what-this-build-adds>`, and give every butler push a descriptive version label with the same wording (not the bare auto number).
 - Do not open two Unity editors on one project, and a batch run cannot start while the project is open elsewhere. Temporary editor scripts for creating prefabs or scenes go in `Assets/TempEditor/Editor/` (outside the project's own asmdefs, which do not reference TMP or the Input System); delete them before committing.
-- A git operation that changes the open scene or prefabs makes the agent's editor show a blocking prompt. Save the scene and open an empty scratch scene first, and reopen the game scene after.
+- A git operation that changes the open scene or prefabs makes the agent's editor show a blocking prompt. Save the scene and open an empty scratch scene first, and reopen the game scene after. The scratch-scene script itself can hang on that prompt, so the safest way is to close the agent's editor (`unity close . --force` when a prompt blocks it) before switching branches, and to reopen it after. Start the agent's editor only after the builds are finished (two editors at once made a build take 26 minutes).
+- Unity CLI: run `unity` from the project (worktree) root, from another folder it says "isn't a Unity project". `unity test --mode EditMode -o <xml>` needs the agent's editor closed. `unity command script run <file> --timeout N` runs a class with `public static string Run()` in the open editor.
+- New scripts, tests and prefabs get their `.meta` files when the editor imports them (also during a test run), so commit the `.meta` files together with the new files.
 - Every object added to a scene is a prefab; the scene keeps only reference overrides.
 
 ## Mobile WebGL performance
@@ -34,6 +36,10 @@ Put here only what holds for all the games.
 - Post-processing with several full-resolution passes (Bloom) cost about 33 ms per frame on the phone in WebGL (apple game: 20 FPS with it, 60 FPS without). Shadows, HDR, MSAA and render scale did not matter. Tonemapping and Vignette are cheap.
 - Before adding a post-processing effect or another full-screen pass, check the FPS counter (`FpsDisplay`, bottom left corner of the HUD) on the phone.
 - Do not set `Application.targetFrameRate` in WebGL (it switches the loop from requestAnimationFrame to a timer). WebGL quality level 0 (Mobile) uses `Mobile_RPAsset`.
+
+## Web builds
+
+- In a browser Esc releases the pointer lock and the game gets no key event for it. A game that locks the cursor while playing pauses when the lock is lost (see `GameFlow` of the apple game), so the pause screen still appears.
 
 ## Code design
 
