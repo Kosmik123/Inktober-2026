@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1000000000000002}
   - component: {fileID: 1000000000000003}
   - component: {fileID: 1000000000000004}
+  - component: {fileID: 1000000000000005}
   m_Layer: 0
   m_Name: Peel Sound
   m_TagString: Untagged
@@ -48,9 +49,10 @@ MonoBehaviour:
   clip: {fileID: 8300000, guid: 0e7d65d720051e0409ffdf972f37209f, type: 3}
   output: {fileID: 0}
   volume: 1
-  minPitch: 0.9
-  maxPitch: 1.1
+  pitchCenter: 1
+  pitchSpread: 0.1
   pitchChangeSpeed: 0.3
+  randomnessSpeed: 2
   minOverlap: 1
   maxOverlap: 2.5
   fadeDuration: 0.4
@@ -68,3 +70,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameFlow: {fileID: 0}
   audioSource: {fileID: 1000000000000003}
+--- !u!114 &1000000000000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000000000000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23bd5ba37ec04e64b143f87478bec6cb, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  knife: {fileID: 0}
+  audioSource: {fileID: 1000000000000003}
+  speedToPitch: 0.5
+  randomnessAtFullTurn: 1
+  smoothTime: 0.1

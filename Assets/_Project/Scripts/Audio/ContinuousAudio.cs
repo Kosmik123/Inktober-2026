@@ -7,13 +7,15 @@ namespace Inktober2026.Audio
 	/// <summary>
 	/// Keeps one short clip sounding without end. The clip is not a loop, so it is played again and again:
 	/// the next voice starts a random time before the previous one ends and fades in while the previous one fades out,
-	/// and the pitch of every voice wanders between a minimum and a maximum along Perlin noise, so the repetition is hard to notice.
+	/// and the pitch of every voice wanders around a mean along Perlin noise (time moves along one axis, <see cref="Randomness"/> shifts along the other), so the repetition is hard to notice.
 	/// Knows nothing about the game: <see cref="Play"/>, <see cref="Pause"/> and <see cref="Stop"/> fade the whole sound in and out.
 	/// </summary>
 	public class ContinuousAudio : MonoBehaviour
 	{
 		private const float PerlinLow = 0.2f;
 		private const float PerlinHigh = 0.8f;
+		private const float MinPitch = 0.1f;
+		private const float MaxPitch = 3f;
 
 		private class Voice
 		{
@@ -36,15 +38,21 @@ namespace Inktober2026.Audio
 		private float volume = 1f;
 
 		[Header("Pitch")]
+		[Tooltip("The mean pitch. The pitch of a voice wanders around it.")]
 		[SerializeField]
-		private float minPitch = 0.9f;
+		private float pitchCenter = 1f;
 
+		[Tooltip("How far the pitch wanders from the mean, as a part of it: 0.1 is from 0.9 to 1.1 of the mean. 0 is no wandering.")]
 		[SerializeField]
-		private float maxPitch = 1.1f;
+		private float pitchSpread = 0.1f;
 
-		[Tooltip("How fast the pitch wanders: Perlin noise steps per second.")]
+		[Tooltip("How fast the pitch wanders in time: steps along the time axis of the Perlin noise per second.")]
 		[SerializeField]
 		private float pitchChangeSpeed = 0.3f;
+
+		[Tooltip("How fast the Randomness moves along the other axis of the Perlin noise: steps per second at Randomness 1.")]
+		[SerializeField]
+		private float randomnessSpeed = 2f;
 
 		[Header("Overlap")]
 		[Tooltip("The next voice starts this many seconds (a random value between min and max) before the previous one ends.")]
@@ -70,6 +78,19 @@ namespace Inktober2026.Audio
 		private float master;
 		private bool voicesPaused;
 		private Mode mode;
+		private float noiseTime;
+		private float noiseShift;
+
+		/// <summary>
+		/// Multiplies the mean pitch, 1 changes nothing. It can be changed while the sound plays and applies at once, to the voices that already sound too.
+		/// </summary>
+		public float PitchMultiplier { get; set; } = 1f;
+
+		/// <summary>
+		/// How fast the pitch noise is shifted sideways, from 0 (it only moves with time) up. Raising it makes the pitch change in a different way,
+		/// so something that raises it while the player acts is heard as a reaction to the player.
+		/// </summary>
+		public float Randomness { get; set; }
 
 		/// <summary>Starts the sound, or resumes it after <see cref="Pause"/>, with a fade in.</summary>
 		public void Play()
@@ -92,7 +113,8 @@ namespace Inktober2026.Audio
 
 		private void OnValidate()
 		{
-			maxPitch = Mathf.Max(minPitch, maxPitch);
+			pitchCenter = Mathf.Max(0.01f, pitchCenter);
+			pitchSpread = Mathf.Clamp01(pitchSpread);
 			maxOverlap = Mathf.Max(minOverlap, maxOverlap);
 		}
 
@@ -121,6 +143,9 @@ namespace Inktober2026.Audio
 
 		private void UpdateVoices(float deltaTime)
 		{
+			noiseTime += deltaTime * pitchChangeSpeed;
+			noiseShift += deltaTime * randomnessSpeed * Mathf.Max(0f, Randomness);
+
 			for (int i = voices.Count - 1; i >= 0; i--)
 			{
 				var voice = voices[i];
@@ -137,13 +162,15 @@ namespace Inktober2026.Audio
 					continue;
 				}
 
-				if (voice.NextStarted == false && remaining <= voice.Overlap && mode == Mode.Playing)
+				// An overlap longer than a part of the clip would make voices pile up.
+				float overlap = Mathf.Min(voice.Overlap, clip.length / pitch * 0.45f);
+				if (voice.NextStarted == false && remaining <= overlap && mode == Mode.Playing)
 				{
 					voice.NextStarted = true;
-					StartVoice(voice.Overlap);
+					StartVoice(overlap);
 				}
 
-				source.volume = volume * master * LoopCrossfade.Gain(voice.Played, remaining, voice.FadeInDuration, voice.Overlap);
+				source.volume = volume * master * LoopCrossfade.Gain(voice.Played, remaining, voice.FadeInDuration, overlap);
 			}
 		}
 
@@ -155,8 +182,7 @@ namespace Inktober2026.Audio
 				Source = source,
 				Seed = Random.value * 1000f,
 				FadeInDuration = fadeInDuration,
-				// An overlap longer than a part of the clip would make voices pile up.
-				Overlap = Mathf.Min(Random.Range(minOverlap, maxOverlap), clip.length * 0.45f / Mathf.Max(0.01f, minPitch)),
+				Overlap = Random.Range(minOverlap, maxOverlap),
 			};
 
 			source.clip = clip;
@@ -169,9 +195,11 @@ namespace Inktober2026.Audio
 
 		private float SamplePitch(float seed)
 		{
-			float noise = Mathf.PerlinNoise(seed, Time.time * pitchChangeSpeed);
-			float t = Mathf.InverseLerp(PerlinLow, PerlinHigh, noise);
-			return Mathf.Lerp(minPitch, maxPitch, t);
+			// Every voice has its own place on the noise, the time moves along one axis and the randomness shifts along the other.
+			float noise = Mathf.PerlinNoise(seed + noiseShift, noiseTime);
+			float deviation = Mathf.InverseLerp(PerlinLow, PerlinHigh, noise) * 2f - 1f;
+			float pitch = pitchCenter * PitchMultiplier * (1f + pitchSpread * Mathf.Clamp(deviation, -1f, 1f));
+			return Mathf.Clamp(pitch, MinPitch, MaxPitch);
 		}
 
 		private AudioSource CreateSource()
