@@ -10,6 +10,13 @@ It lives on the branches of that game. **When starting a new game, create its me
 and keep there: the rules and design of the game, its branch prefix and integration branch, its itch.io page, numbers measured for it, open items.
 Put here only what holds for all the games.
 
+## Concept phase comes first
+
+- **The agent never starts a game on its own.** A new game begins with a concept phase: the agent and the user talk the theme through, define the goals, the rules and the scope of the game, and the user makes the decisions.
+- Until the user says explicitly that the concept is settled and implementation can start, the agent does not create branches, scenes, scripts or prefabs, and does not set up the project. Reading, asking questions and proposing options is fine.
+- Write the decisions of the concept phase to the game's memory file (`<theme>-memory.md`) so they survive between sessions. Open questions go there as open items.
+- If the user's instruction is unclear or looks unfinished, ask instead of guessing and starting work.
+
 ## Repository and workflow
 
 - One game per daily theme. Branch prefix per theme: `<day>-<theme>/` (for example `1-apple/`, `2-relic/`), one feature per branch, e.g. `2-relic/<feature>`.
