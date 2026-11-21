@@ -17,6 +17,9 @@ namespace Inktober2026.Puzzle
         /// <summary>Raised after a piece was removed from the current grid; the argument is that piece.</summary>
         public event Action<ArrowPiece> OnPieceRemoved;
 
+        /// <summary>Raised when the player tried to remove a piece that is blocked; the argument is that piece.</summary>
+        public event Action<ArrowPiece> OnRemovalBlocked;
+
         [SerializeField]
         private GameFlow gameFlow;
 
@@ -63,12 +66,19 @@ namespace Inktober2026.Puzzle
 
         /// <summary>
         /// Removes the piece when its line is clear. The first removal starts the round.
-        /// Nothing is removed once the round is won. Returns whether the piece was removed.
+        /// Nothing is removed once the round is won. A piece that is blocked raises <see cref="OnRemovalBlocked"/>.
+        /// Returns whether the piece was removed.
         /// </summary>
         public bool TryRemove(ArrowPiece piece)
         {
-            if (Grid == null || gameFlow.State == GameState.Won || Grid.CanRemove(piece) == false)
+            if (Grid == null || gameFlow.State == GameState.Won)
                 return false;
+
+            if (Grid.CanRemove(piece) == false)
+            {
+                OnRemovalBlocked?.Invoke(piece);
+                return false;
+            }
 
             gameFlow.BeginRound();
             Grid.Remove(piece);
