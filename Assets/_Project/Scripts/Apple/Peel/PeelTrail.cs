@@ -26,12 +26,18 @@ namespace Inktober2026.Apple.Peel
         private Transform surface;
 
         [Header("Peel")]
-        [Tooltip("Width of the peeled strip, in world units.")]
+        [Tooltip("Width of the peeled strip at the middle position of the throttle, in world units.")]
         [SerializeField]
         private float width = 0.06f;
+
+        /// <summary>
+        /// The width of the peeled strip right now, in world units: the set width times the throttle of the knife (if it has one).
+        /// The peel, the strip and the enclosure check read it when a point is added, so a point is peeled with the width it was recorded with.
+        /// Older lines are measured with the current width too, which is close enough while the throttle changes slowly.
+        /// </summary>
         public float Width
         {
-            get => width;
+            get => width * (knife ? knife.WidthScale : 1f);
             set => width = Mathf.Max(0f, value);
         }
 
@@ -58,6 +64,7 @@ namespace Inktober2026.Apple.Peel
 
         private readonly List<PeelPoint> points = new List<PeelPoint>();
         private ISurfaceWalker walker;
+        private KnifeController knife;
 
         /// <summary>Recorded points, oldest first.</summary>
         public IReadOnlyList<PeelPoint> Points => points;
@@ -79,6 +86,7 @@ namespace Inktober2026.Apple.Peel
         private void Awake()
         {
             walker = GetComponent<ISurfaceWalker>();
+            TryGetComponent(out knife);
             if (walker == null || surface == null)
             {
                 Debug.LogError($"{nameof(PeelTrail)} needs a component implementing {nameof(ISurfaceWalker)} on the same object and the surface assigned.", this);
@@ -129,7 +137,7 @@ namespace Inktober2026.Apple.Peel
 
             Gizmos.matrix = surface.localToWorldMatrix;
             Gizmos.color = fleshColor;
-            float half = width * 0.5f;
+            float half = Width * 0.5f;
             for (int i = 0; i < points.Count; i++)
             {
                 var point = points[i];

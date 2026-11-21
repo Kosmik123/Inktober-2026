@@ -5,7 +5,8 @@ namespace Inktober2026.Apple.Knife
 {
     /// <summary>
     /// Keeps the surface in place and spins it under the knife at a constant angular speed (see <see cref="KnifeSpin"/>).
-    /// The Steer action turns the path. The knife only slides away from or towards the center and tilts to the surface.
+    /// The first axis of the Steer action turns the path. The second axis moves the throttle (<see cref="KnifeThrottle"/>):
+    /// forward is faster and the peel is wider, back is slower and narrower (the peel reads <see cref="WidthScale"/>). The knife only slides away from or towards the center and tilts to the surface.
     /// The way the contact point is read is a strategy, any <see cref="ISurfaceWalker"/> on the same object.
     /// </summary>
     public class KnifeController : MonoBehaviour
@@ -34,6 +35,31 @@ namespace Inktober2026.Apple.Knife
         [SerializeField]
         private float maxTurnRate = 180f;
 
+        [Header("Throttle")]
+        [Tooltip("How much of the second axis (in the same units as the turn, degrees) moves the throttle from the middle to the end. Smaller is more sensitive.")]
+        [SerializeField]
+        private float throttleRange = 60f;
+
+        [Tooltip("How fast the throttle falls back to the middle when the second axis rests, as part of its range per second. 0 keeps it where it was left.")]
+        [SerializeField]
+        private float throttleReturn;
+
+        [Tooltip("Multiplier of the speed with the throttle pulled all the way back.")]
+        [SerializeField]
+        private float minSpeedScale = 0.4f;
+
+        [Tooltip("Multiplier of the speed with the throttle pushed all the way forward.")]
+        [SerializeField]
+        private float maxSpeedScale = 1.8f;
+
+        [Tooltip("Multiplier of the width of the peel with the throttle pulled all the way back.")]
+        [SerializeField]
+        private float minWidthScale = 0.5f;
+
+        [Tooltip("Multiplier of the width of the peel with the throttle pushed all the way forward.")]
+        [SerializeField]
+        private float maxWidthScale = 1.6f;
+
         [Header("Blade")]
         [Tooltip("Size of the blade along the direction of travel. The knife rests on the surface over this length, so smaller bumps do not tilt it.")]
         [SerializeField]
@@ -51,6 +77,10 @@ namespace Inktober2026.Apple.Knife
         [SerializeField]
         private float turnRate;
 
+        [SerializeField]
+        private float throttleValue;
+
+        private readonly KnifeThrottle throttle = new KnifeThrottle();
         private ISurfaceWalker walker;
         private Collider surfaceCollider;
         private Vector3 homeDirection;
@@ -58,6 +88,15 @@ namespace Inktober2026.Apple.Knife
         private float referenceRadius;
         private float reach;
         private Pose pose;
+
+        /// <summary>Position of the throttle, from -1 (pulled back) to 1 (pushed forward).</summary>
+        public float Throttle => throttle.Value;
+
+        /// <summary>Multiplier of the speed that the throttle gives.</summary>
+        public float SpeedScale => KnifeThrottle.Scale(throttle.Value, minSpeedScale, maxSpeedScale);
+
+        /// <summary>Multiplier of the width of the peel that the throttle gives.</summary>
+        public float WidthScale => KnifeThrottle.Scale(throttle.Value, minWidthScale, maxWidthScale);
 
         private void Awake()
         {
@@ -106,11 +145,16 @@ namespace Inktober2026.Apple.Knife
             if (deltaTime <= 0f)
                 return;
 
+            var steer = steerAction.action.ReadValue<Vector2>();
+            throttle.Add(steer.y / Mathf.Max(0.01f, throttleRange));
+            throttle.Relax(throttleReturn, deltaTime);
+            throttleValue = throttle.Value;
+
             float limit = maxTurnRate * deltaTime;
-            float yaw = Mathf.Clamp(ReadTurnDegrees(), -limit, limit);
+            float yaw = Mathf.Clamp(steer.x, -limit, limit);
             turnRate = yaw / deltaTime;
 
-            float pitch = speed / referenceRadius * Mathf.Rad2Deg * deltaTime;
+            float pitch = speed * SpeedScale / referenceRadius * Mathf.Rad2Deg * deltaTime;
             KnifeSpin.Apply(walker, surface, homeDirection, heading, pitch, yaw, reach);
             PlaceKnife(deltaTime);
         }
@@ -132,14 +176,14 @@ namespace Inktober2026.Apple.Knife
             transform.SetPositionAndRotation(pose.position, pose.rotation);
         }
 
-        /// <summary>Turn for this frame in degrees. The scaling per device (and delta time for sticks) is done by the binding processors.</summary>
-        private float ReadTurnDegrees()
-        {
-            return steerAction.action.ReadValue<Vector2>().x;
-        }
-
         private void OnValidate()
         {
+            throttleRange = Mathf.Max(0.01f, throttleRange);
+            throttleReturn = Mathf.Max(0f, throttleReturn);
+            minSpeedScale = Mathf.Max(0f, minSpeedScale);
+            maxSpeedScale = Mathf.Max(0f, maxSpeedScale);
+            minWidthScale = Mathf.Max(0.01f, minWidthScale);
+            maxWidthScale = Mathf.Max(0.01f, maxWidthScale);
             bladeLength = Mathf.Max(0.01f, bladeLength);
             bladeWidth = Mathf.Max(0.01f, bladeWidth);
             smoothTime = Mathf.Max(0f, smoothTime);
