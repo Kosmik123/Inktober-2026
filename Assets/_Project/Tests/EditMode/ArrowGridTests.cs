@@ -100,6 +100,32 @@ namespace Inktober2026.Tests.EditMode
         }
 
         [Test]
+        public void RemovingAPieceRaisesTheEventOnce()
+        {
+            var piece = Piece(Vector3Int.right, new Vector3Int(0, 0, 0));
+            grid.TryAdd(piece);
+            var removed = new System.Collections.Generic.List<ArrowPiece>();
+            grid.OnPieceRemoved += removed.Add;
+
+            grid.Remove(piece);
+            grid.Remove(piece);
+
+            CollectionAssert.AreEqual(new[] { piece }, removed);
+        }
+
+        [Test]
+        public void SolvingDoesNotRaiseTheEventOfTheGrid()
+        {
+            grid.TryAdd(Piece(Vector3Int.right, new Vector3Int(0, 0, 0)));
+            int raised = 0;
+            grid.OnPieceRemoved += _ => raised++;
+
+            grid.IsSolvable();
+
+            Assert.AreEqual(0, raised);
+        }
+
+        [Test]
         public void TwoPiecesPointingAtEachOtherCannotBeSolved()
         {
             grid.TryAdd(Piece(Vector3Int.right, new Vector3Int(0, 0, 0)));

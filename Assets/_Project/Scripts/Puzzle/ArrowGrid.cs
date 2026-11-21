@@ -11,6 +11,9 @@ namespace Inktober2026.Puzzle
     /// </summary>
     public class ArrowGrid
     {
+        /// <summary>Raised after a piece was removed from the grid; the argument is that piece.</summary>
+        public event Action<ArrowPiece> OnPieceRemoved;
+
         private readonly ArrowPiece[,,] occupancy;
         private readonly List<ArrowPiece> pieces = new List<ArrowPiece>();
 
@@ -96,6 +99,8 @@ namespace Inktober2026.Puzzle
 
             foreach (var cell in piece.Cells)
                 occupancy[cell.x, cell.y, cell.z] = null;
+
+            OnPieceRemoved?.Invoke(piece);
         }
 
         /// <summary>
