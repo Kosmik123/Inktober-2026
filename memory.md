@@ -10,6 +10,8 @@ It lives on the branches of that game. **When starting a new game, create its me
 and keep there: the rules and design of the game, its branch prefix and integration branch, its itch.io page, numbers measured for it, open items.
 Put here only what holds for all the games.
 
+**Project name.** At the start of a game's work (after the concept is settled) set the product name in ProjectSettings (Player settings) to `Inktober - <theme>`, for example `Inktober - Relic`. This name stays until the real title of the game is invented.
+
 ## Concept phase comes first
 
 - **The agent never starts a game on its own.** A new game begins with a concept phase: the agent and the user talk the theme through, define the goals, the rules and the scope of the game, and the user makes the decisions.
