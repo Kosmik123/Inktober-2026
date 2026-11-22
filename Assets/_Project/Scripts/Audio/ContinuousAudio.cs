@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Pool;
 
 namespace Inktober2026.Audio
 {
@@ -94,7 +95,7 @@ namespace Inktober2026.Audio
 		private int activeVoices;
 
 		private readonly List<Voice> voices = new List<Voice>();
-		private readonly Stack<AudioSource> freeSources = new Stack<AudioSource>();
+		private ObjectPool<AudioSource> sourcePool;
 		private float master;
 		private bool voicesPaused;
 		private Mode mode;
@@ -139,8 +140,25 @@ namespace Inktober2026.Audio
 
 		private void Awake()
 		{
+			sourcePool = new ObjectPool<AudioSource>(
+				createFunc: CreateSource,
+				actionOnGet: source => source.gameObject.SetActive(true),
+				actionOnRelease: source =>
+				{
+					source.Stop();
+					source.gameObject.SetActive(false);
+				},
+				actionOnDestroy: source => Destroy(source.gameObject),
+				collectionCheck: true,
+				defaultCapacity: maxVoices,
+				maxSize: maxVoices);
+
+			// Create all the voices now, so nothing is created while playing.
+			var warmUp = new List<AudioSource>(maxVoices);
 			for (int i = 0; i < maxVoices; i++)
-				freeSources.Push(CreateSource());
+				warmUp.Add(sourcePool.Get());
+			foreach (var source in warmUp)
+				sourcePool.Release(source);
 		}
 
 		private void OnValidate()
@@ -211,10 +229,10 @@ namespace Inktober2026.Audio
 		private bool StartVoice(float fadeInDuration)
 		{
 			// The pool is empty only when every voice still sounds. Then the next voice waits, the sound goes on with the ones that play.
-			if (freeSources.Count == 0)
+			if (sourcePool.CountActive >= maxVoices)
 				return false;
 
-			var source = freeSources.Pop();
+			var source = sourcePool.Get();
 			var voice = new Voice
 			{
 				Source = source,
@@ -268,8 +286,7 @@ namespace Inktober2026.Audio
 		private void ReleaseVoice(int index)
 		{
 			var source = voices[index].Source;
-			source.Stop();
-			freeSources.Push(source);
+			sourcePool.Release(source);
 			voices.RemoveAt(index);
 			activeVoices = voices.Count;
 		}
