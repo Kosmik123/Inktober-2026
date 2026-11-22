@@ -59,6 +59,8 @@ MonoBehaviour:
   activeVoices: 0
   minOverlap: 1
   maxOverlap: 2.5
+  minCrossfadeDuration: 0.4
+  maxCrossfadeDuration: 1
   fadeDuration: 0.4
 --- !u!114 &1000000000000004
 MonoBehaviour:

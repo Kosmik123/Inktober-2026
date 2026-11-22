@@ -26,6 +26,8 @@ namespace Inktober2026.Audio
 			public float Overlap;
 			public float FadeInDuration;
 			public bool NextStarted;
+			public float Fade;
+			public float SinceNext;
 		}
 
 		[SerializeField]
@@ -71,12 +73,19 @@ namespace Inktober2026.Audio
 		private int maxVoices = 3;
 
 		[Header("Overlap")]
-		[Tooltip("The next voice starts this many seconds (a random value between min and max) before the previous one ends.")]
+		[Tooltip("The next voice starts this many seconds (a random value between min and max) before the previous one ends. The crossfade happens at the start of it.")]
 		[SerializeField]
 		private float minOverlap = 1f;
 
 		[SerializeField]
 		private float maxOverlap = 2.5f;
+
+		[Tooltip("The crossfade, when the next voice starts, lasts a random time between min and max (in seconds), and never longer than the overlap. The new voice fades in while the previous one fades out.")]
+		[SerializeField]
+		private float minCrossfadeDuration = 0.4f;
+
+		[SerializeField]
+		private float maxCrossfadeDuration = 1f;
 
 		[Tooltip("Time of the fade of the whole sound after Play, Pause and Stop.")]
 		[SerializeField]
@@ -169,6 +178,8 @@ namespace Inktober2026.Audio
 			mutedCutoff = Mathf.Clamp(mutedCutoff, 10f, openCutoff);
 			maxOverlap = Mathf.Max(minOverlap, maxOverlap);
 			maxVoices = Mathf.Max(2, maxVoices);
+			minCrossfadeDuration = Mathf.Max(0.01f, minCrossfadeDuration);
+			maxCrossfadeDuration = Mathf.Max(minCrossfadeDuration, maxCrossfadeDuration);
 		}
 
 		private void Update()
@@ -219,9 +230,32 @@ namespace Inktober2026.Audio
 				// An overlap longer than a part of the clip would make voices pile up.
 				float overlap = Mathf.Min(voice.Overlap, clip.length / pitch * 0.45f);
 				if (voice.NextStarted == false && remaining <= overlap && mode == Mode.Playing)
-					voice.NextStarted = StartVoice(overlap);
+				{
+					// The length of the crossfade is drawn first and then limited to the overlap, so it always fits in it.
+					float fade = Mathf.Min(Random.Range(minCrossfadeDuration, maxCrossfadeDuration), overlap);
+					if (StartVoice(fade))
+					{
+						voice.NextStarted = true;
+						voice.Fade = fade;
+					}
+				}
 
-				source.volume = volume * master * LoopCrossfade.Gain(voice.Played, remaining, voice.FadeInDuration, overlap);
+				// Once the next voice has started, this one fades out along with the fade in of the new one and is released when silent.
+				float fadeLeft = remaining;
+				float fadeLength = overlap;
+				if (voice.NextStarted)
+				{
+					voice.SinceNext += deltaTime;
+					fadeLeft = voice.Fade - voice.SinceNext;
+					fadeLength = voice.Fade;
+					if (fadeLeft <= 0f)
+					{
+						ReleaseVoice(i);
+						continue;
+					}
+				}
+
+				source.volume = volume * master * LoopCrossfade.Gain(voice.Played, fadeLeft, voice.FadeInDuration, fadeLength);
 				ApplyPanAndFilter(source);
 			}
 		}
