@@ -55,6 +55,8 @@ MonoBehaviour:
   randomnessSpeed: 2
   openCutoff: 22000
   mutedCutoff: 700
+  maxVoices: 3
+  activeVoices: 0
   minOverlap: 1
   maxOverlap: 2.5
   fadeDuration: 0.4

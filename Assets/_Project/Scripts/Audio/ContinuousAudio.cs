@@ -63,6 +63,12 @@ namespace Inktober2026.Audio
 		[SerializeField]
 		private float mutedCutoff = 700f;
 
+		[Header("Voices")]
+		[Tooltip("Size of the pool. All the voices are created once, at the start, and reused, nothing is created while playing. Two are enough for one crossfade, the rest is a reserve.")]
+		[Min(2)]
+		[SerializeField]
+		private int maxVoices = 3;
+
 		[Header("Overlap")]
 		[Tooltip("The next voice starts this many seconds (a random value between min and max) before the previous one ends.")]
 		[SerializeField]
@@ -81,6 +87,11 @@ namespace Inktober2026.Audio
 			Playing,
 			Paused,
 		}
+
+		[Header("States")]
+		[Tooltip("Voices that sound now, for watching in the inspector. The pool has Max Voices children in all.")]
+		[SerializeField]
+		private int activeVoices;
 
 		private readonly List<Voice> voices = new List<Voice>();
 		private readonly Stack<AudioSource> freeSources = new Stack<AudioSource>();
@@ -126,6 +137,12 @@ namespace Inktober2026.Audio
 			mode = Mode.Stopped;
 		}
 
+		private void Awake()
+		{
+			for (int i = 0; i < maxVoices; i++)
+				freeSources.Push(CreateSource());
+		}
+
 		private void OnValidate()
 		{
 			pitchCenter = Mathf.Max(0.01f, pitchCenter);
@@ -133,6 +150,7 @@ namespace Inktober2026.Audio
 			openCutoff = Mathf.Max(10f, openCutoff);
 			mutedCutoff = Mathf.Clamp(mutedCutoff, 10f, openCutoff);
 			maxOverlap = Mathf.Max(minOverlap, maxOverlap);
+			maxVoices = Mathf.Max(2, maxVoices);
 		}
 
 		private void Update()
@@ -156,6 +174,7 @@ namespace Inktober2026.Audio
 				StartVoice(0f);
 
 			UpdateVoices(Time.deltaTime);
+			activeVoices = voices.Count;
 		}
 
 		private void UpdateVoices(float deltaTime)
@@ -182,19 +201,20 @@ namespace Inktober2026.Audio
 				// An overlap longer than a part of the clip would make voices pile up.
 				float overlap = Mathf.Min(voice.Overlap, clip.length / pitch * 0.45f);
 				if (voice.NextStarted == false && remaining <= overlap && mode == Mode.Playing)
-				{
-					voice.NextStarted = true;
-					StartVoice(overlap);
-				}
+					voice.NextStarted = StartVoice(overlap);
 
 				source.volume = volume * master * LoopCrossfade.Gain(voice.Played, remaining, voice.FadeInDuration, overlap);
 				ApplyPanAndFilter(source);
 			}
 		}
 
-		private void StartVoice(float fadeInDuration)
+		private bool StartVoice(float fadeInDuration)
 		{
-			var source = freeSources.Count > 0 ? freeSources.Pop() : CreateSource();
+			// The pool is empty only when every voice still sounds. Then the next voice waits, the sound goes on with the ones that play.
+			if (freeSources.Count == 0)
+				return false;
+
+			var source = freeSources.Pop();
 			var voice = new Voice
 			{
 				Source = source,
@@ -209,6 +229,7 @@ namespace Inktober2026.Audio
 			source.volume = 0f;
 			source.Play();
 			voices.Add(voice);
+			return true;
 		}
 
 		private float SamplePitch(float seed)
@@ -250,6 +271,7 @@ namespace Inktober2026.Audio
 			source.Stop();
 			freeSources.Push(source);
 			voices.RemoveAt(index);
+			activeVoices = voices.Count;
 		}
 
 		private void HoldOrStop(bool paused)
