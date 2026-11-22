@@ -89,6 +89,12 @@ namespace Inktober2026.Apple.Knife
         private float reach;
         private Pose pose;
 
+        /// <summary>Current turn rate in degrees per second, negative to one side and positive to the other.</summary>
+        public float TurnRate => turnRate;
+
+        /// <summary>Upper limit of the turn rate, in degrees per second.</summary>
+        public float MaxTurnRate => maxTurnRate;
+
         /// <summary>Position of the throttle, from -1 (pulled back) to 1 (pushed forward).</summary>
         public float Throttle => throttle.Value;
 
