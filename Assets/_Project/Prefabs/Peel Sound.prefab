@@ -53,6 +53,8 @@ MonoBehaviour:
   pitchSpread: 0.1
   pitchChangeSpeed: 0.3
   randomnessSpeed: 2
+  openCutoff: 22000
+  mutedCutoff: 700
   minOverlap: 1
   maxOverlap: 2.5
   fadeDuration: 0.4
@@ -86,4 +88,6 @@ MonoBehaviour:
   audioSource: {fileID: 1000000000000003}
   speedToPitch: 0.5
   randomnessAtFullTurn: 1
+  panAmount: 0.6
+  muffleAmount: 0.5
   smoothTime: 0.1

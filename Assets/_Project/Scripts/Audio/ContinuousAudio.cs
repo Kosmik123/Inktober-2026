@@ -54,6 +54,15 @@ namespace Inktober2026.Audio
 		[SerializeField]
 		private float randomnessSpeed = 2f;
 
+		[Header("Filter")]
+		[Tooltip("Cutoff of the low-pass filter with no muffling, in Hz. Around the top of the hearing range, so the filter does nothing.")]
+		[SerializeField]
+		private float openCutoff = 22000f;
+
+		[Tooltip("Cutoff of the low-pass filter with Muffle at 1, in Hz. Lower is more muffled.")]
+		[SerializeField]
+		private float mutedCutoff = 700f;
+
 		[Header("Overlap")]
 		[Tooltip("The next voice starts this many seconds (a random value between min and max) before the previous one ends.")]
 		[SerializeField]
@@ -92,6 +101,12 @@ namespace Inktober2026.Audio
 		/// </summary>
 		public float Randomness { get; set; }
 
+		/// <summary>Stereo position of the sound, from -1 (left) to 1 (right). Applies at once.</summary>
+		public float Pan { get; set; }
+
+		/// <summary>How muffled the sound is, from 0 (clear) to 1 (the low-pass cutoff is at its lowest). Applies at once.</summary>
+		public float Muffle { get; set; }
+
 		/// <summary>Starts the sound, or resumes it after <see cref="Pause"/>, with a fade in.</summary>
 		public void Play()
 		{
@@ -115,6 +130,8 @@ namespace Inktober2026.Audio
 		{
 			pitchCenter = Mathf.Max(0.01f, pitchCenter);
 			pitchSpread = Mathf.Clamp01(pitchSpread);
+			openCutoff = Mathf.Max(10f, openCutoff);
+			mutedCutoff = Mathf.Clamp(mutedCutoff, 10f, openCutoff);
 			maxOverlap = Mathf.Max(minOverlap, maxOverlap);
 		}
 
@@ -171,6 +188,7 @@ namespace Inktober2026.Audio
 				}
 
 				source.volume = volume * master * LoopCrossfade.Gain(voice.Played, remaining, voice.FadeInDuration, overlap);
+				ApplyPanAndFilter(source);
 			}
 		}
 
@@ -202,9 +220,23 @@ namespace Inktober2026.Audio
 			return Mathf.Clamp(pitch, MinPitch, MaxPitch);
 		}
 
+		private void ApplyPanAndFilter(AudioSource source)
+		{
+			source.panStereo = Mathf.Clamp(Pan, -1f, 1f);
+
+			// The cutoff is perceived on a logarithmic scale, so it is interpolated in it.
+			float open = Mathf.Max(10f, openCutoff);
+			float muted = Mathf.Clamp(mutedCutoff, 10f, open);
+			source.GetComponent<AudioLowPassFilter>().cutoffFrequency = open * Mathf.Pow(muted / open, Mathf.Clamp01(Muffle));
+		}
+
+		// A filter works on the sound of the object it is on, so every voice gets an object of its own.
 		private AudioSource CreateSource()
 		{
-			var source = gameObject.AddComponent<AudioSource>();
+			var voiceObject = new GameObject("Voice");
+			voiceObject.transform.SetParent(transform, false);
+			voiceObject.AddComponent<AudioLowPassFilter>();
+			var source = voiceObject.AddComponent<AudioSource>();
 			source.playOnAwake = false;
 			source.loop = false;
 			source.spatialBlend = 0f;
