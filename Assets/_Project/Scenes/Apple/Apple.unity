@@ -554,6 +554,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5446007134290952645}
     m_Modifications:
+    - target: {fileID: 4981790124738182646, guid: 779b1b61fd207f742abf85fd4e68971f, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 5598064048584922404, guid: 779b1b61fd207f742abf85fd4e68971f, type: 3}
       propertyPath: m_Name
       value: Restart Button
@@ -1315,6 +1319,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19265d7bdc97ad1448ac2f6c2c9cd479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inktober.Game.GameFlow
+--- !u!1001 &9000000000000001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1000000000000004, guid: a9ed2782fb19472c98b37f9eada8bd03, type: 3}
+      propertyPath: gameFlow
+      value: 
+      objectReference: {fileID: 2143952308}
+    - target: {fileID: 1000000000000005, guid: a9ed2782fb19472c98b37f9eada8bd03, type: 3}
+      propertyPath: knife
+      value: 
+      objectReference: {fileID: 2109668569}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a9ed2782fb19472c98b37f9eada8bd03, type: 3}
 --- !u!1001 &2588640310172817185
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2024,27 +2049,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bb5e2283fe94d3d47b4fc77541ccdaf4, type: 3}
---- !u!1001 &9000000000000001
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1000000000000004, guid: a9ed2782fb19472c98b37f9eada8bd03, type: 3}
-      propertyPath: gameFlow
-      value: 
-      objectReference: {fileID: 2143952308}
-    - target: {fileID: 1000000000000005, guid: a9ed2782fb19472c98b37f9eada8bd03, type: 3}
-      propertyPath: knife
-      value: 
-      objectReference: {fileID: 2109668569}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a9ed2782fb19472c98b37f9eada8bd03, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
