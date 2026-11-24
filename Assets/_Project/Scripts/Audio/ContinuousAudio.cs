@@ -308,8 +308,8 @@ namespace Inktober2026.Audio
 		{
 			var voiceObject = new GameObject("Voice");
 			voiceObject.transform.SetParent(transform, false);
-			voiceObject.AddComponent<AudioLowPassFilter>();
 			var source = voiceObject.AddComponent<AudioSource>();
+			voiceObject.AddComponent<AudioLowPassFilter>();
 			source.playOnAwake = false;
 			source.loop = false;
 			source.spatialBlend = 0f;
