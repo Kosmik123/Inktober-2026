@@ -2,6 +2,7 @@ using System;
 using Bipolar.TouchSticks;
 using Inktober2026.Apple.Knife;
 using Inktober2026.Apple.Peel;
+using PlasticGui.WorkspaceWindow.QueryViews;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -49,6 +50,11 @@ namespace Inktober2026.Game
 		[SerializeField]
 		private float restartDelay = 0.7f;
 
+		[Header("Music")]
+		[SerializeField]
+		private AudioSource music;
+		private static AudioSource musicSingleton;
+
 		[Header("States")]
 		[SerializeField]
 		private GameState state;
@@ -64,7 +70,30 @@ namespace Inktober2026.Game
 			enclosure = FindAnyObjectByType<PeelEnclosureDetector>();
 		}
 
-		private void OnEnable()
+        private void Awake()
+        {
+            MakeMusicSingleton();
+
+            void MakeMusicSingleton()
+            {
+				if (music == null)
+					return;
+
+                if (musicSingleton == null)
+                {
+                    musicSingleton = music;
+					music.transform.parent = null;	
+                    DontDestroyOnLoad(musicSingleton);
+                }
+                else if (musicSingleton != music)
+                {
+                    Destroy(music.gameObject);
+                    music = musicSingleton;
+                }
+            }
+        }
+
+        private void OnEnable()
 		{
 			selfCollision.OnSelfIntersection += PeelSelfCollision_OnSelfIntersection;
 			enclosure.OnEnclosed += PeelEnclosureDetector_OnEnclosed;
@@ -187,5 +216,5 @@ namespace Inktober2026.Game
 			confirmAction.action.performed -= ConfirmAction_Performed;
 			pauseAction.action.performed -= PauseAction_Performed;
 		}
-	}
+    }
 }
