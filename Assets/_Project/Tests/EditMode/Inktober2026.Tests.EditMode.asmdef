@@ -1,12 +1,12 @@
 {
-    "name": "Inktober2026.Tests.EditMode",
-    "rootNamespace": "Inktober2026.Tests.EditMode",
+    "name": "Inktober2026.Apple.Tests.EditMode",
+    "rootNamespace": "Inktober2026.Apple.Tests.EditMode",
     "references": [
-        "Inktober2026",
-        "Unity.InputSystem",
-        "Bipolar.ProceduralMeshes",
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "GUID:7ca330c4f1afe414d9d7999508828387",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:a4ddd416cd149a94898b6ac0f9d9d7e0",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3"
     ],
     "includePlatforms": [
         "Editor"
