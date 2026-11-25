@@ -42,7 +42,7 @@ namespace Inktober2026.UI
 
         private void OnEnable()
         {
-            gameFlow.OnStateChanged += GameFlow_OnStateChanged;
+            gameFlow.OnStateChanged += Refresh;
             button.onClick.AddListener(gameFlow.Confirm);
             Refresh(gameFlow.State);
         }
@@ -60,14 +60,9 @@ namespace Inktober2026.UI
             };
         }
 
-        private void GameFlow_OnStateChanged(GameState state)
-        {
-            Refresh(state);
-        }
-
         private void OnDisable()
         {
-            gameFlow.OnStateChanged -= GameFlow_OnStateChanged;
+            gameFlow.OnStateChanged -= Refresh;
             button.onClick.RemoveListener(gameFlow.Confirm);
         }
     }

@@ -27,7 +27,7 @@ namespace Inktober2026.UI
 
         private void OnEnable()
         {
-            gameFlow.OnStateChanged += GameFlow_OnStateChanged;
+            gameFlow.OnStateChanged += Refresh;
             button.onClick.AddListener(gameFlow.TogglePause);
             Refresh(gameFlow.State);
         }
@@ -37,14 +37,9 @@ namespace Inktober2026.UI
             button.gameObject.SetActive(state == GameState.Playing && TouchPointers.Enabled);
         }
 
-        private void GameFlow_OnStateChanged(GameState state)
-        {
-            Refresh(state);
-        }
-
         private void OnDisable()
         {
-            gameFlow.OnStateChanged -= GameFlow_OnStateChanged;
+            gameFlow.OnStateChanged -= Refresh;
             button.onClick.RemoveListener(gameFlow.TogglePause);
         }
     }
