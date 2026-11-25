@@ -4,6 +4,7 @@
     "references": [
         "Inktober",
         "Unity.InputSystem",
+        "Bipolar.ProceduralMeshes",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

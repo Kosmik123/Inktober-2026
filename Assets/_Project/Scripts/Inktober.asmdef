@@ -3,6 +3,7 @@
     "rootNamespace": "Inktober",
     "references": [
         "Unity.InputSystem",
+        "Bipolar.ProceduralMeshes",
         "Unity.TextMeshPro",
         "UnityEngine.UI",
         "Bipolar.TouchSticks"
