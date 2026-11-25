@@ -785,6 +785,10 @@ PrefabInstance:
       propertyPath: gameFlow
       value: 
       objectReference: {fileID: 2143952308}
+    - target: {fileID: 805405860980835831, guid: 6481f281c04226346bb1599bda94460f, type: 3}
+      propertyPath: baseEmissionRate
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2737642275315574410, guid: 6481f281c04226346bb1599bda94460f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -5
