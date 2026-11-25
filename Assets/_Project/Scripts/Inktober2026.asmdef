@@ -1,6 +1,6 @@
 {
-    "name": "Inktober",
-    "rootNamespace": "Inktober",
+    "name": "Inktober2026",
+    "rootNamespace": "Inktober2026",
     "references": [
         "Unity.InputSystem",
         "Bipolar.ProceduralMeshes",

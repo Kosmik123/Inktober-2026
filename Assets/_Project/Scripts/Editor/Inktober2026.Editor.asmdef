@@ -1,8 +1,8 @@
 {
-    "name": "Inktober.Editor",
-    "rootNamespace": "Inktober.Editor",
+    "name": "Inktober2026.Editor",
+    "rootNamespace": "Inktober2026.Editor",
     "references": [
-        "Inktober"
+        "Inktober2026"
     ],
     "includePlatforms": [
         "Editor"

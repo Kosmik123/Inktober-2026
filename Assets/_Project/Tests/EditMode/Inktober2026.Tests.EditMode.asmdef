@@ -1,8 +1,8 @@
 {
-    "name": "Inktober.Tests.EditMode",
-    "rootNamespace": "Inktober.Tests.EditMode",
+    "name": "Inktober2026.Tests.EditMode",
+    "rootNamespace": "Inktober2026.Tests.EditMode",
     "references": [
-        "Inktober",
+        "Inktober2026",
         "Unity.InputSystem",
         "Bipolar.ProceduralMeshes",
         "UnityEngine.TestRunner",
