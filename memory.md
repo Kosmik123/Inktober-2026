@@ -37,7 +37,8 @@ Put here only what holds for all the games.
 - One persistent worktree per agent session, with its own open Unity Editor (avoids a full re-import). The user's main checkout is theirs: do not touch it.
 - Commits made by the agent are authored as the agent, never as the system git user (usually `Kosmik`): override per command, `git -c user.name="Claude" -c user.email="noreply@anthropic.com" commit ...`, never change git config. Keep the Co-Authored-By trailer.
 - Do not commit unrelated ProjectSettings side effects (for example `runInBackground`, `preloadedAssets` toggled by the Input System during builds). Run In Background is meant to be ON in every project.
-- Namespace of the code is `Inktober2026`. `BuildScript`, `FpsDisplay` and `CameraFraming` are shared and live on `master`.
+- **A game's asmdefs are named `Inktober2026.<Theme>`**, for example `Inktober2026.Apple`. Every subordinate asmdef takes that whole root: `Inktober2026.<Theme>.Editor`, `Inktober2026.<Theme>.Tests.EditMode`. **Namespace = asmdef name**: the code of each asmdef is in the namespace of the same name (also set it as the asmdef's `rootNamespace`).
+- `BuildScript`, `FpsDisplay` and `CameraFraming` are shared and live on `master`.
 
 ## Testing and deploying
 
