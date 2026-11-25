@@ -754,7 +754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5652019263596265843, guid: ddd3a946443d43c49958504cea1cce66, type: 3}
       propertyPath: field of view
-      value: 66.461334
+      value: 69.04299
       objectReference: {fileID: 0}
     - target: {fileID: 6744691257986413512, guid: ddd3a946443d43c49958504cea1cce66, type: 3}
       propertyPath: appliedVerticalFov

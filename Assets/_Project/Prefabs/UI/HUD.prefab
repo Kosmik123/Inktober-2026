@@ -81,8 +81,8 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1000, y: 1000}
-  m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_ScreenMatchMode: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -295,11 +295,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8817771226362344890, guid: 37397c23ca3c69b4aa9924bb76e0add3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 900.00006
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8817771226362344890, guid: 37397c23ca3c69b4aa9924bb76e0add3, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 525.3688
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8817771226362344890, guid: 37397c23ca3c69b4aa9924bb76e0add3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -499,11 +499,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 874790440714533289, guid: 06f0dfcc2bc351646b9741ef3f889769, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 900.00006
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 874790440714533289, guid: 06f0dfcc2bc351646b9741ef3f889769, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 525.3688
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 874790440714533289, guid: 06f0dfcc2bc351646b9741ef3f889769, type: 3}
       propertyPath: m_LocalPosition.x
@@ -557,6 +557,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Result Panel
       objectReference: {fileID: 0}
+    - target: {fileID: 1681247577394865121, guid: 06f0dfcc2bc351646b9741ef3f889769, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 800
+      objectReference: {fileID: 0}
+    - target: {fileID: 1681247577394865121, guid: 06f0dfcc2bc351646b9741ef3f889769, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 400
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -601,11 +609,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3946120181133426876, guid: fccc9f05902e51e49af8f2d59a0554e4, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 900.00006
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3946120181133426876, guid: fccc9f05902e51e49af8f2d59a0554e4, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 525.3688
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3946120181133426876, guid: fccc9f05902e51e49af8f2d59a0554e4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -707,11 +715,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8817771226362344890, guid: 779b1b61fd207f742abf85fd4e68971f, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 900.00006
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8817771226362344890, guid: 779b1b61fd207f742abf85fd4e68971f, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 525.3688
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8817771226362344890, guid: 779b1b61fd207f742abf85fd4e68971f, type: 3}
       propertyPath: m_LocalPosition.x
