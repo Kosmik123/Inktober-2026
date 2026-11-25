@@ -97,7 +97,8 @@ namespace Inktober2026.Apple.Peel
         // After KnifeController.Update, so the walker is already reanchored to the moved surface.
         private void LateUpdate()
         {
-            if (walker.IsOnSurface == false)
+            // The knife is off before and after the round and in the pause. Then the surface may move (the spin before the round), and that is not a peel.
+            if (walker.IsOnSurface == false || (knife && knife.enabled == false))
                 return;
 
             var position = surface.InverseTransformPoint(walker.Position);

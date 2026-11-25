@@ -85,9 +85,13 @@ namespace Inktober2026.Apple.Knife
         private Collider surfaceCollider;
         private Vector3 homeDirection;
         private Vector3 heading;
+        private bool initialized;
         private float referenceRadius;
         private float reach;
         private Pose pose;
+
+        /// <summary>The object the knife walks on.</summary>
+        public Transform Surface => surface;
 
         /// <summary>Current turn rate in degrees per second, negative to one side and positive to the other.</summary>
         public float TurnRate => turnRate;
@@ -124,6 +128,19 @@ namespace Inktober2026.Apple.Knife
 
         private void Start()
         {
+            Initialize();
+        }
+
+        /// <summary>
+        /// Finds the surface under the knife and remembers the place the knife keeps above it.
+        /// Runs once, at the start or earlier when something needs the knife before the round (a disabled component gets no Start).
+        /// </summary>
+        public void Initialize()
+        {
+            if (initialized || walker == null)
+                return;
+
+            initialized = true;
             if (walker.Place(transform.position, -transform.up, transform.forward) == false)
             {
                 Debug.LogError($"{nameof(KnifeController)} could not find a surface below the knife.", this);
@@ -162,6 +179,22 @@ namespace Inktober2026.Apple.Knife
 
             float pitch = speed * SpeedScale / referenceRadius * Mathf.Rad2Deg * deltaTime;
             KnifeSpin.Apply(walker, surface, homeDirection, heading, pitch, yaw, reach);
+            PlaceKnife(deltaTime);
+        }
+
+        /// <summary>
+        /// Lays the knife on the surface under it again after something else turned the surface (for example the spin before the round).
+        /// </summary>
+        public void Settle(float deltaTime)
+        {
+            Initialize();
+            if (initialized == false || surface == null)
+                return;
+
+            Physics.SyncTransforms();
+            if (walker.Place(surface.position + homeDirection.normalized * reach, -homeDirection, heading) == false)
+                return;
+
             PlaceKnife(deltaTime);
         }
 
