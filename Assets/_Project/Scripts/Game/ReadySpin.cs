@@ -6,7 +6,7 @@ namespace Inktober2026.Game
 {
 	/// <summary>
 	/// Before the round (the Ready state) turns the apple slowly and at random, so the player can wait for the place they want to start the peel from.
-	/// The round starts from the pose the apple has when the player starts it. The knife lies on the apple the whole time.
+	/// The round starts from the pose the apple has when the player starts it. The knife does not touch the apple until then.
 	/// </summary>
 	[RequireComponent(typeof(KnifeController))]
 	public class ReadySpin : MonoBehaviour
@@ -57,12 +57,7 @@ namespace Inktober2026.Game
 			if (gameFlow.State != GameState.Ready || knife.Surface == null)
 				return;
 
-			// The knife has to know the surface in its starting pose, before it is turned.
-			knife.Initialize();
-
-			float deltaTime = Time.deltaTime;
-			knife.Surface.rotation = tumble.Step(deltaTime) * knife.Surface.rotation;
-			knife.Settle(deltaTime);
+			knife.Surface.rotation = tumble.Step(Time.deltaTime) * knife.Surface.rotation;
 		}
 
 		private void OnValidate()

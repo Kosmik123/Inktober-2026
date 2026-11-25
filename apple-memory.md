@@ -29,7 +29,7 @@ Specific to the Apple game. Shared knowledge is in `memory.md`.
 
 ## Ready spin
 
-- In the Ready state `ReadySpin` (on the Knife prefab) turns the apple slowly at random (`Tumble`: an axis and a speed of 8..22 deg/s that drift to new random ones every 3..7 s), and `KnifeController.Settle` keeps the knife lying on it. The round starts from the pose the apple has when Start is pressed, so the player picks the starting point. `PeelTrail` records only while the knife is enabled, otherwise the turning apple would be peeled. `KnifeController.Initialize` is idempotent because a component disabled in Ready gets no `Start`. Not tried in Play Mode yet.
+- In the Ready state `ReadySpin` (on the Knife prefab) turns the apple slowly at random (`Tumble`: an axis and a speed of 8..22 deg/s that drift to new random ones every 3..7 s). The knife stays where the scene put it and does not touch the apple. `KnifeController` initializes itself on its first update, that is when the round starts: it lays the walker on the apple under the knife and the look of the knife eases down from the scene pose. The round starts from the pose the apple has when Start is pressed, so the player picks the starting point. The size used for the speed is measured at the start rotation of the apple, so the turn does not change the speed. Not tried in Play Mode yet.
 
 ## Peel sound
 

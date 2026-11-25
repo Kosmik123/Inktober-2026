@@ -86,6 +86,7 @@ namespace Inktober2026.Apple.Knife
         private Vector3 homeDirection;
         private Vector3 heading;
         private bool initialized;
+        private Quaternion surfaceStartRotation;
         private float referenceRadius;
         private float reach;
         private Pose pose;
@@ -123,25 +124,35 @@ namespace Inktober2026.Apple.Knife
             {
                 Debug.LogError($"{nameof(KnifeController)} needs the Steer action and the surface assigned.", this);
                 enabled = false;
+                return;
             }
-        }
 
-        private void Start()
-        {
-            Initialize();
+            surfaceStartRotation = surface.rotation;
         }
 
         /// <summary>
-        /// Finds the surface under the knife and remembers the place the knife keeps above it.
-        /// Runs once, at the start or earlier when something needs the knife before the round (a disabled component gets no Start).
+        /// Lays the knife on the surface under it and remembers the place the knife keeps above the surface. Runs on the first update, that is when the round starts:
+        /// before it the knife stays where the scene put it, and the apple may turn under it. The look of the knife eases to the surface from there.
         /// </summary>
-        public void Initialize()
+        private void Initialize()
         {
-            if (initialized || walker == null)
-                return;
-
             initialized = true;
-            if (walker.Place(transform.position, -transform.up, transform.forward) == false)
+
+            // The size of the apple is measured in the pose it had in the scene, so the speed does not depend on how it was turned before the round.
+            var turnedRotation = surface.rotation;
+            surface.rotation = surfaceStartRotation;
+            Physics.SyncTransforms();
+            surfaceCollider = surface.GetComponentInChildren<Collider>();
+            var extents = surfaceCollider ? surfaceCollider.bounds.extents : Vector3.one * (transform.position - surface.position).magnitude;
+            surface.rotation = turnedRotation;
+            Physics.SyncTransforms();
+
+            referenceRadius = Mathf.Max(0.01f, (extents.x + extents.y + extents.z) / 3f);
+            reach = extents.magnitude + ReachMargin;
+
+            var scenePose = new Pose(transform.position, transform.rotation);
+            var outward = (transform.position - surface.position).normalized;
+            if (walker.Place(surface.position + outward * reach, -outward, transform.forward) == false)
             {
                 Debug.LogError($"{nameof(KnifeController)} could not find a surface below the knife.", this);
                 enabled = false;
@@ -154,16 +165,19 @@ namespace Inktober2026.Apple.Knife
             homeDirection = (transform.position - surface.position).normalized;
             heading = transform.forward;
 
-            surfaceCollider = surface.GetComponentInChildren<Collider>();
-            pose = new Pose(transform.position, transform.rotation);
-
-            var extents = surfaceCollider ? surfaceCollider.bounds.extents : Vector3.one * (transform.position - surface.position).magnitude;
-            referenceRadius = Mathf.Max(0.01f, (extents.x + extents.y + extents.z) / 3f);
-            reach = extents.magnitude + ReachMargin;
+            pose = scenePose;
+            transform.SetPositionAndRotation(scenePose.position, scenePose.rotation);
         }
 
         private void Update()
         {
+            if (initialized == false)
+            {
+                Initialize();
+                if (enabled == false)
+                    return;
+            }
+
             float deltaTime = Mathf.Min(Time.deltaTime, MaxDeltaTime);
             if (deltaTime <= 0f)
                 return;
@@ -179,22 +193,6 @@ namespace Inktober2026.Apple.Knife
 
             float pitch = speed * SpeedScale / referenceRadius * Mathf.Rad2Deg * deltaTime;
             KnifeSpin.Apply(walker, surface, homeDirection, heading, pitch, yaw, reach);
-            PlaceKnife(deltaTime);
-        }
-
-        /// <summary>
-        /// Lays the knife on the surface under it again after something else turned the surface (for example the spin before the round).
-        /// </summary>
-        public void Settle(float deltaTime)
-        {
-            Initialize();
-            if (initialized == false || surface == null)
-                return;
-
-            Physics.SyncTransforms();
-            if (walker.Place(surface.position + homeDirection.normalized * reach, -homeDirection, heading) == false)
-                return;
-
             PlaceKnife(deltaTime);
         }
 
