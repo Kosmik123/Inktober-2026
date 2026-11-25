@@ -785,10 +785,6 @@ PrefabInstance:
       propertyPath: gameFlow
       value: 
       objectReference: {fileID: 2143952308}
-    - target: {fileID: 805405860980835831, guid: 6481f281c04226346bb1599bda94460f, type: 3}
-      propertyPath: baseEmissionRate
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 2737642275315574410, guid: 6481f281c04226346bb1599bda94460f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -5
@@ -1010,6 +1006,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 359849604394392084, guid: 84435d186b218ef4da0c283048d5702a, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 877866391199628013, guid: 84435d186b218ef4da0c283048d5702a, type: 3}
       propertyPath: gameFlow
       value: 
@@ -1126,7 +1126,8 @@ PrefabInstance:
       propertyPath: gameFlow
       value: 
       objectReference: {fileID: 2143952308}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8082375642571204336, guid: 84435d186b218ef4da0c283048d5702a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

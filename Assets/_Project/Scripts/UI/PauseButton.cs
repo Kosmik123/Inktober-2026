@@ -19,6 +19,9 @@ namespace Inktober2026.UI
         [SerializeField]
         private Button button;
 
+        [SerializeField]
+        private GameObject pauseContainer;
+
         private void Reset()
         {
             gameFlow = FindAnyObjectByType<GameFlow>();
@@ -35,12 +38,15 @@ namespace Inktober2026.UI
         private void Refresh(GameState state)
         {
             button.gameObject.SetActive(state == GameState.Playing && TouchPointers.Enabled);
+            if (pauseContainer)
+                pauseContainer.SetActive(state == GameState.Paused);
         }
 
         private void OnDisable()
         {
             gameFlow.OnStateChanged -= Refresh;
             button.onClick.RemoveListener(gameFlow.TogglePause);
+            Refresh(gameFlow.State);
         }
     }
 }
