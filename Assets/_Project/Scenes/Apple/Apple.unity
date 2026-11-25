@@ -754,7 +754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5652019263596265843, guid: ddd3a946443d43c49958504cea1cce66, type: 3}
       propertyPath: field of view
-      value: 69.04299
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 6744691257986413512, guid: ddd3a946443d43c49958504cea1cce66, type: 3}
       propertyPath: appliedVerticalFov
@@ -781,18 +781,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knife
       objectReference: {fileID: 0}
-    - target: {fileID: 868206861834714969, guid: 6481f281c04226346bb1599bda94460f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 805405860980835831, guid: 6481f281c04226346bb1599bda94460f, type: 3}
+      propertyPath: gameFlow
+      value: 
+      objectReference: {fileID: 2143952308}
+    - target: {fileID: 2737642275315574410, guid: 6481f281c04226346bb1599bda94460f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -5
       objectReference: {fileID: 0}
-    - target: {fileID: 4816924802753758953, guid: 6481f281c04226346bb1599bda94460f, type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 21a72cf1581149c479202f07d15cc74f, type: 2}
-    - target: {fileID: 4816924802753758953, guid: 6481f281c04226346bb1599bda94460f, type: 3}
-      propertyPath: 'm_Materials.Array.data[2]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 21a72cf1581149c479202f07d15cc74f, type: 2}
     - target: {fileID: 4876507644940216281, guid: 6481f281c04226346bb1599bda94460f, type: 3}
       propertyPath: surface
       value: 
@@ -837,10 +833,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5967161262483714326, guid: 6481f281c04226346bb1599bda94460f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 10
-      objectReference: {fileID: 0}
+    - target: {fileID: 6104419745604679201, guid: 6481f281c04226346bb1599bda94460f, type: 3}
+      propertyPath: 'TriggerModule.primitives.Array.data[0]'
+      value: 
+      objectReference: {fileID: 7863271221345588304}
     - target: {fileID: 8143001129649909254, guid: 6481f281c04226346bb1599bda94460f, type: 3}
       propertyPath: surface
       value: 
@@ -1188,6 +1184,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5781da48239043f4c892de01ac695844, type: 3}
+--- !u!4 &7863271221345588304 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9194356556157771244, guid: 5781da48239043f4c892de01ac695844, type: 3}
+  m_PrefabInstance: {fileID: 7863271221345588303}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8439245048760818902
 PrefabInstance:
   m_ObjectHideFlags: 0
