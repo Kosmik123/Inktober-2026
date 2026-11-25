@@ -32,8 +32,7 @@ namespace Inktober2026.Apple.Peel
 
         /// <summary>
         /// The width of the peeled strip right now, in world units: the set width times the throttle of the knife (if it has one).
-        /// The peel, the strip and the enclosure check read it when a point is added, so a point is peeled with the width it was recorded with.
-        /// Older lines are measured with the current width too, which is close enough while the throttle changes slowly.
+        /// Every recorded <see cref="PeelPoint"/> keeps the width it was peeled with, so older lines are measured with their own width.
         /// </summary>
         public float Width
         {
@@ -106,7 +105,7 @@ namespace Inktober2026.Apple.Peel
 
             var normal = surface.InverseTransformDirection(walker.Normal).normalized;
             var forward = surface.InverseTransformDirection(walker.Forward).normalized;
-            Add(new PeelPoint(position, normal, forward));
+            Add(new PeelPoint(position, normal, forward, Width));
         }
 
         private bool IsTooClose(Vector3 localPosition)

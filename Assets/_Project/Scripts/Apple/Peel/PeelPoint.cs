@@ -5,11 +5,12 @@ namespace Inktober2026.Apple.Peel
     /// <summary>One sample of the knife path, in the local space of the peeled object (it moves and turns with the apple).</summary>
     public readonly struct PeelPoint
     {
-        public PeelPoint(Vector3 position, Vector3 normal, Vector3 forward)
+        public PeelPoint(Vector3 position, Vector3 normal, Vector3 forward, float width = 0f)
         {
             Position = position;
             Normal = normal;
             Forward = forward;
+            Width = width;
         }
 
         /// <summary>Centre of the peeled strip.</summary>
@@ -20,6 +21,9 @@ namespace Inktober2026.Apple.Peel
 
         /// <summary>Direction the knife was moving, tangent to the surface.</summary>
         public Vector3 Forward { get; }
+
+        /// <summary>Width of the strip peeled up to this point, in world units, as it was when the point was recorded.</summary>
+        public float Width { get; }
 
         /// <summary>Direction across the strip, tangent to the surface.</summary>
         public Vector3 Right => Vector3.Cross(Normal, Forward).normalized;
