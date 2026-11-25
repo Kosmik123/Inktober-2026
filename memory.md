@@ -38,7 +38,7 @@ Put here only what holds for all the games.
 - Commits made by the agent are authored as the agent, never as the system git user (usually `Kosmik`): override per command, `git -c user.name="Claude" -c user.email="noreply@anthropic.com" commit ...`, never change git config. Keep the Co-Authored-By trailer.
 - Do not commit unrelated ProjectSettings side effects (for example `runInBackground`, `preloadedAssets` toggled by the Input System during builds). Run In Background is meant to be ON in every project.
 - **A game's asmdefs are named `Inktober2026.<Theme>`**, for example `Inktober2026.Apple`. Every subordinate asmdef takes that whole root: `Inktober2026.<Theme>.Editor`, `Inktober2026.<Theme>.Tests.EditMode`. **Namespace = asmdef name**: the code of each asmdef is in the namespace of the same name (also set it as the asmdef's `rootNamespace`).
-- `BuildScript`, `FpsDisplay` and `CameraFraming` are shared and live on `master`.
+- `BuildScript`, `FpsDisplay` and `CameraFraming` are shared and live on `master`. **Shared code stays in its own `Inktober2026` asmdefs** (`Inktober2026`, `Inktober2026.Editor`), separate from the game's `Inktober2026.<Theme>` asmdefs: a game adds its own asmdefs and does not rename or put its code into the shared ones.
 
 ## Testing and deploying
 
