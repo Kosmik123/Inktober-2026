@@ -58,7 +58,7 @@ MonoBehaviour:
   titleText: Game Over
   lengthFormat: 'Length: {0:0} cm'
   coverageFormat: 'Peeled: {0:0}%'
-  bestFormat: 'Best: {0:0} cm'
+  bestFormat: 'Previous best: {0:0} cm'
   recordText: New record!
 --- !u!1 &3602033439004857156
 GameObject:

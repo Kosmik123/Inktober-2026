@@ -66,16 +66,21 @@ namespace Inktober2026.UI
             panel.SetActive(gameFlow.State == GameState.GameOver);
         }
 
-        private void Show()
+        private void Show(bool show)
         {
+            panel.SetActive(show);
+            if (show == false)
+                return;
+
             coverage.Refresh();
+            float previousBest = BestScore.Length;
             bool isRecord = BestScore.TrySet(trail.Length);
 
             var text = new StringBuilder();
             text.AppendLine($"<size=130%>{titleText}</size>");
             text.AppendLine(string.Format(lengthFormat, trail.Length * displayScale));
             text.AppendLine(string.Format(coverageFormat, coverage.Coverage * 100f));
-            text.Append(string.Format(bestFormat, BestScore.Length * displayScale));
+            text.Append(string.Format(bestFormat, previousBest * displayScale));
             if (isRecord)
                 text.Append("\n<color=#FFD84A>").Append(recordText).Append("</color>");
 
@@ -85,13 +90,7 @@ namespace Inktober2026.UI
 
         private void GameFlow_OnStateChanged(GameState state)
         {
-            if (state == GameState.GameOver)
-            {
-                Show();
-                return;
-            }
-
-            panel.SetActive(false);
+            Show(state == GameState.GameOver);
         }
 
         private void OnDisable()
