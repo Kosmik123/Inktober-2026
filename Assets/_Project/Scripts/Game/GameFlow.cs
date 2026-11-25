@@ -2,7 +2,6 @@ using System;
 using Bipolar.TouchSticks;
 using Inktober2026.Apple.Knife;
 using Inktober2026.Apple.Peel;
-using PlasticGui.WorkspaceWindow.QueryViews;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
