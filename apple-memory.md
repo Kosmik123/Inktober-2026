@@ -10,7 +10,7 @@ Specific to the Apple game. Shared knowledge is in `memory.md`.
 
 ## Game rules
 
-- A procedural apple (radius 0.5 units, 1 unit is about 10 cm) sits at the origin and spins under a stationary knife. The peel is painted into an R8 mask. The goal is the longest peel (the score). The only loss is the trail crossing itself, or the knife cutting between two older lines (`PeelEnclosure`).
+- A procedural apple (radius 0.5 units, 1 unit is about 10 cm) sits at the origin and spins under a stationary knife. The peel is painted into an R8 mask. The goal is the longest peel (the score). The only loss is the trail crossing itself (centre lines only, width ignored on purpose, confirmed by the user), or the knife cutting between two older lines (`PeelEnclosure`): every `PeelPoint` keeps the width it was peeled with, and the knife is enclosed when older strips, each with its own width, cover the whole span of the newest one and there is such a line on both sides.
 - Game over shows the score and the best score (`BestScore`, stored in PlayerPrefs). States in `GameFlow`: Ready, Playing, Paused, GameOver.
 - Controls (`Steer` action, a Vector2): the first axis turns the path. The second axis is a throttle lever from -1 to 1 that stays where it was left: forward gives a faster spin (x1.8) and a wider peel (x1.6), back gives slower (x0.4) and narrower (x0.5). The multipliers, the range of the axis (60) and the return rate (0) are fields of `KnifeController`. The width is read through `PeelTrail.Width`.
 - Esc pauses. In a browser Esc does not reach the game, so `GameFlow` pauses when the cursor lock is lost. The pause shows Resume and Restart (`GameFlowButton` and `RestartButton`); Restart reloads the scene.

@@ -73,7 +73,7 @@ namespace Inktober2026.Apple.Peel
                 return;
 
             float scale = Mathf.Abs(trail.Surface.lossyScale.x);
-            bool enclosed = PeelEnclosure.IsEnclosed(trail.Points, trail.Width, scale, ignoredTailLength, heightTolerance);
+            bool enclosed = PeelEnclosure.IsEnclosed(trail.Points, scale, ignoredTailLength, heightTolerance);
             if (enclosed && isEnclosed == false)
                 enclosedSince = Time.time;
 

@@ -5,13 +5,18 @@ namespace Inktober2026.Apple.Peel
 {
     /// <summary>
     /// Finds out whether the knife is cutting between two older lines so closely that no new peel is made.
-    /// The peeled strip is <c>width</c> wide, so the newest point peels the area up to half the width on both sides.
-    /// With the nearest older line at <c>left</c> and <c>right</c> (distances between the centres of the strips),
-    /// the strips of those lines cover the newest one completely when <c>left + right &lt;= width</c>.
+    /// Every point has the width it was peeled with. The newest point peels the area up to half its width on both sides,
+    /// and it peels nothing new when the strips of older lines, each with its own width, already cover that whole span.
     /// The points are in the local space of the peeled object.
     /// </summary>
     public static class PeelEnclosure
     {
+        /// <summary>At how many places across the newest strip the cover is tested, both edges included. A gap narrower than the distance between them can be missed.</summary>
+        public const int SpanSamples = 33;
+
+        // Local units. Lets strips that only touch count as touching despite the rounding.
+        private const float CoverTolerance = 1e-5f;
+
         /// <summary>
         /// Measures the distance from the newest point to the nearest older segment on each side of the knife path.
         /// A side without any older segment in range reports <see cref="float.PositiveInfinity"/>.
@@ -69,17 +74,84 @@ namespace Inktober2026.Apple.Peel
         }
 
         /// <summary>
-        /// True when the strips of the nearest older lines on both sides cover the strip of the newest point,
-        /// so the knife peeled nothing new. See <see cref="TryMeasure"/> for the arguments.
+        /// True when the newest point peels nothing new: the strips of older lines cover its whole width, and there is such a line on both sides
+        /// of the knife (a knife that goes along a single wider strip is not between two lines).
+        /// The span across the newest point is tested at <see cref="SpanSamples"/> places in the plane tangent to the surface.
+        /// Every older segment covers what is closer to it than half the width it was peeled with. See <see cref="TryMeasure"/> for the arguments.
         /// </summary>
-        /// <param name="width">Width of the peeled strip, in world units.</param>
-        public static bool IsEnclosed(IReadOnlyList<PeelPoint> points, float width, float scale, float ignoredTailLength, float heightTolerance)
+        public static bool IsEnclosed(IReadOnlyList<PeelPoint> points, float scale, float ignoredTailLength, float heightTolerance)
         {
-            if (TryMeasure(points, scale, ignoredTailLength, heightTolerance, out float left, out float right) == false)
+            int count = points.Count;
+            if (count < 3)
                 return false;
 
-            // Infinity on one side keeps the sum infinite, so a side without a line never encloses.
-            return left + right <= width;
+            var newest = points[count - 1];
+            var along = Vector3.ProjectOnPlane(newest.Position - points[count - 2].Position, newest.Normal);
+            if (along.sqrMagnitude < 1e-12f)
+                return false;
+
+            var axisX = along.normalized;
+            var axisY = Vector3.Cross(newest.Normal, axisX);
+            float safeScale = Mathf.Max(scale, 1e-6f);
+            float localTolerance = heightTolerance / safeScale;
+            float halfSpan = newest.Width * 0.5f / safeScale;
+            if (halfSpan <= 0f)
+                return false;
+
+            long allCovered = (1L << SpanSamples) - 1;
+            long covered = 0;
+            bool hasLeft = false;
+            bool hasRight = false;
+
+            // The newest segment itself is not measured, but its length counts as the beginning of the ignored tail.
+            float tail = (newest.Position - points[count - 2].Position).magnitude * safeScale;
+            for (int i = count - 3; i >= 0; i--)
+            {
+                var from = points[i].Position;
+                var to = points[i + 1].Position;
+                tail += (to - from).magnitude * safeScale;
+                if (tail < ignoredTailLength)
+                    continue;
+
+                var offset = ClosestPoint(newest.Position, from, to) - newest.Position;
+                if (Mathf.Abs(Vector3.Dot(offset, newest.Normal)) > localTolerance)
+                    continue;
+
+                // A segment is peeled with the width of the point that ends it.
+                float halfWidth = points[i + 1].Width * 0.5f / safeScale + CoverTolerance;
+                var start = ToPlane(from - newest.Position, axisX, axisY);
+                var end = ToPlane(to - newest.Position, axisX, axisY);
+                if (((Vector2)ClosestPoint(Vector3.zero, start, end)).magnitude > halfSpan + halfWidth)
+                    continue;
+
+                long segmentCovers = 0;
+                for (int sample = 0; sample < SpanSamples; sample++)
+                {
+                    var place = new Vector3(0f, Mathf.Lerp(-halfSpan, halfSpan, sample / (SpanSamples - 1f)));
+                    if ((ClosestPoint(place, start, end) - place).sqrMagnitude <= halfWidth * halfWidth)
+                        segmentCovers |= 1L << sample;
+                }
+
+                if (segmentCovers == 0)
+                    continue;
+
+                covered |= segmentCovers;
+                // Positive side is to the right of the direction of travel, like in TryMeasure.
+                if (Vector3.Dot(offset, axisY) < 0f)
+                    hasLeft = true;
+                else
+                    hasRight = true;
+
+                if (hasLeft && hasRight && covered == allCovered)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static Vector3 ToPlane(Vector3 offset, Vector3 axisX, Vector3 axisY)
+        {
+            return new Vector3(Vector3.Dot(offset, axisX), Vector3.Dot(offset, axisY));
         }
 
         private static Vector3 ClosestPoint(Vector3 point, Vector3 from, Vector3 to)
