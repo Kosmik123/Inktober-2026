@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _FleshMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a95bc6f7d469eed4b9064802f4cd7af5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FleshNormalMap:
@@ -46,14 +46,25 @@ Material:
     m_Ints: []
     m_Floats:
     - _Depth: 0.006
+    - _FleshDryness: 0.4
     - _FleshNormalScale: 0.6
+    - _FleshPatchScale: 8
     - _FleshSmoothness: 0.855
+    - _FleshSpotAmount: 0.3
+    - _FleshSpotScale: 80
+    - _FleshSpotSmoothness: 0.97
     - _MaskResolution: 2048
+    - _ScatterStrength: 0.7
+    - _ScatterWrap: 0.6
     - _SkinNormalScale: 0.1
-    - _SkinSmoothness: 0.55
+    - _SkinSmoothness: 0.64
     - _Threshold: 0.5
+    - _Translucency: 0
+    - _TranslucencyDistortion: 0.3
+    - _TranslucencyPower: 4
     m_Colors:
-    - _FleshColor: {r: 1, g: 0.90000004, b: 0.39999998, a: 1}
+    - _FleshColor: {r: 1, g: 0.9183006, b: 0.5, a: 1}
+    - _ScatterColor: {r: 1, g: 0.72, b: 0.41999996, a: 1}
     - _SkinColor: {r: 1, g: 0.7, b: 0.7020979, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

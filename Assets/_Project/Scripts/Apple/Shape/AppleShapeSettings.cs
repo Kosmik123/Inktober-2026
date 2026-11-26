@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 namespace Inktober2026.Apple.Shape
 {
@@ -8,7 +8,7 @@ namespace Inktober2026.Apple.Shape
     /// times a factor made of a wider shoulder near the north pole, a dimple at each pole and a random unevenness.
     /// Angles are measured from the north pole (0 degrees) to the south pole (180 degrees). Depths are shares of the radius.
     /// </summary>
-    [Serializable]
+    [System.Serializable]
     public class AppleShapeSettings
     {
         [Tooltip("Radius of the sphere the apple is made from, in local units. 0.5 is the radius of the default Unity sphere.")]
@@ -56,8 +56,8 @@ namespace Inktober2026.Apple.Shape
         [Header("Unevenness")]
         [Tooltip("Strength of the random unevenness of the surface (a share of the radius). It depends on the seed.")]
         [SerializeField]
-        private float unevenness = 0.025f;
-        public float Unevenness => unevenness;
+        private MinMaxCurve unevenness = 0.025f;
+        public float Unevenness => unevenness.Evaluate(Random.value);
 
         [Tooltip("Size of the unevenness: higher values give smaller and more frequent bumps.")]
         [SerializeField]

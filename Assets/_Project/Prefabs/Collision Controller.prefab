@@ -82,6 +82,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Inktober2026.Apple::Inktober2026.Apple.Peel.PeelPoleCollision
   trail: {fileID: 0}
-  stalkAngle: 6
-  calyxAngle: 6
+  stalkAngle: 1
+  calyxAngle: 1
   hasHit: 0
