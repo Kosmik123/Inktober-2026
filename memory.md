@@ -63,6 +63,7 @@ Put here only what holds for all the games.
 
 ## Code design
 
+- In games with short play sessions (hypercasual and smaller casual ones) **a restart does not reload the scene**. The same scene stays loaded, and the objects have a mechanism to return to their starting values (state, transforms, physics velocities, spawned objects, UI).
 - Flat MonoBehaviour hierarchy: one base component with the implementations as strategies (serialized plain classes), not several MonoBehaviours implementing one interface. Never put an interface in `[RequireComponent]`: any implementer satisfies it, so Unity refuses to remove or swap the current one.
 - Logic that does not need Unity is a plain C# class with events; a MonoBehaviour wraps it and forwards the events, and the view builds visuals from those events.
 
