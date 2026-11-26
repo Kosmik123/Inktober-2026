@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6852771416005198429, guid: a3a19083c44099c4bb08bd2c668c1eaa, type: 3}
       propertyPath: m_Name
-      value: Peel Strip Base Variant
+      value: Peel Strip (Physical)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -85,7 +85,7 @@ MonoBehaviour:
   damping: 2
   velocityCorrection: 0.9
   apple: {fileID: 0}
-  appleRadius: 0.5
+  appleRadius: 0.52
   clearance: 0.01
   iterations: 4
   stepTime: 0.008333334
