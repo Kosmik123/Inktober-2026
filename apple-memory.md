@@ -32,7 +32,7 @@ Specific to the Apple game. Shared knowledge is in `memory.md`.
 
 ## Stalk and calyx (poles)
 
-- Decided on 2026-11-27: the poles are blocked, reaching one loses the round; this also keeps the strip off the poles, where its UV used to break. `PeelPoleCollision` (on the Collision Controller prefab) ends the round when the edge of the strip gets within `stalkAngle` / `calyxAngle` (6 degrees) of a pole (`PeelPole.Touches`). `ReadySpin` keeps the poles at least `poleClearance` (40 degrees) from the knife. The look: `AppleStalkMesh` and `AppleCalyxMesh` (procedural), prefabs `Apple Stalk` and `Apple Calyx` in the Apple prefab, placed in the dimples by `AppleEnds`. They have no colliders.
+- Decided on 2026-11-27: the poles are blocked, reaching one loses the round; this also keeps the strip off the poles, where its UV used to break. `PeelPoleCollision` (on the Collision Controller prefab) ends the round when the centre of the knife gets within `stalkAngle` / `calyxAngle` plus `widthShare` of the half width angle (`PeelPole.Reach`; with share 1 the half width alone is 11..19 degrees, which the user found too early, so the default is 0.3). Its gizmo shows the circle. The strip UV now unwraps the right edge next to the left one, so passing near a pole no longer breaks the rest of the strip. `ReadySpin` keeps the poles at least `poleClearance` (40 degrees) from the knife. The look: `AppleStalkMesh` and `AppleCalyxMesh` (procedural), prefabs `Apple Stalk` and `Apple Calyx` in the Apple prefab, placed in the dimples by `AppleEnds`. They have no colliders.
 
 ## Flesh look (`PeeledApple` shader)
 

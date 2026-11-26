@@ -66,6 +66,31 @@ namespace Inktober2026.Tests.EditMode
             return new PeelPoint(new Vector3(0f, 0.5f, 2f * Spacing) + step, Vector3.up, Vector3.forward, Width);
         }
 
+        // A knife going straight over the north pole: next to it the edges of the strip pass it on different sides.
+        [Test]
+        public void GoingOverAPole_TheEdgesStayLessThanOneTextureApart()
+        {
+            var recorder = new PeelSectionRecorder(Spacing, IgnoredTail, HeightTolerance);
+            var points = new List<PeelPoint>();
+            float length = 0f;
+            int checkedSections = 0;
+            for (int i = 0; i <= 60; i++)
+            {
+                var turn = Quaternion.AngleAxis(-45f + i * 1.5f, Vector3.right);
+                // A little beside the pole, so one edge crosses it.
+                var position = turn * new Vector3(0.01f, 0.5f, 0f);
+                points.Add(new PeelPoint(position, position.normalized, turn * Vector3.forward, Width));
+                length += Spacing * 1.01f;
+                if (recorder.TryRecord(points, length, Width, 1f, out var section) == false)
+                    continue;
+
+                checkedSections++;
+                Assert.LessOrEqual(Mathf.Abs(section.RightUv.x - section.LeftUv.x), 0.5f + 1e-4f, $"Point {i}.");
+            }
+
+            Assert.Greater(checkedSections, 30);
+        }
+
         [Test]
         public void Preview_BeforeTheFirstSectionOrWithoutGrowth_IsNothing()
         {

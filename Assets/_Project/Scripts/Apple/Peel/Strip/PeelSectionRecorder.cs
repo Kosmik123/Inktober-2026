@@ -27,7 +27,6 @@ namespace Inktober2026.Apple.Peel
         private Vector3 lastChord;
         private bool hasLastChord;
         private float lastLeftU;
-        private float lastRightU;
         private bool hasUv;
         private float lastLeftEdge;
         private float lastRightEdge;
@@ -83,7 +82,6 @@ namespace Inktober2026.Apple.Peel
             lastLeftEdge = leftEdge;
             lastRightEdge = rightEdge;
             lastLeftU = leftUv.x;
-            lastRightU = rightUv.x;
             hasUv = true;
             coverLeftSum = 0f;
             coverRightSum = 0f;
@@ -168,7 +166,11 @@ namespace Inktober2026.Apple.Peel
             rightUv = AppleUv.FromDirection(newest.Position + right * (rightEdge / safeScale));
 
             leftUv.x += Mathf.Round((hasUv ? lastLeftU : leftUv.x) - leftUv.x);
-            rightUv.x += Mathf.Round((hasUv ? lastRightU : leftUv.x) - rightUv.x);
+
+            // The right edge is placed next to the left one, not next to its own past: near a pole the edges go around it on different
+            // sides, and unwrapped each on its own they could end up a whole texture apart for the rest of the strip.
+            float across = rightUv.x - leftUv.x;
+            rightUv.x = leftUv.x + across - Mathf.Round(across);
         }
     }
 }

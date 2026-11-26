@@ -35,6 +35,16 @@ namespace Inktober2026.Tests.EditMode
             Assert.IsTrue(PeelPole.Touches(At(163f), 0.2f, 1f, Cap, Cap));
         }
 
+        [Test]
+        public void TheShareOfTheWidth_SaysHowMuchTheEdgeCounts()
+        {
+            // The edge of a strip 0.2 wide is about 11.5 degrees from its centre.
+            Assert.IsFalse(PeelPole.Touches(At(7f), 0.2f, 1f, Cap, Cap, 0f));
+            Assert.IsTrue(PeelPole.Touches(At(5f), 0.2f, 1f, Cap, Cap, 0f));
+            Assert.IsTrue(PeelPole.Touches(At(11f), 0.2f, 1f, Cap, Cap, 0.5f));
+            Assert.IsFalse(PeelPole.Touches(At(12.5f), 0.2f, 1f, Cap, Cap, 0.5f));
+        }
+
         [TestCase(0f)]
         [TestCase(10f)]
         [TestCase(39f)]

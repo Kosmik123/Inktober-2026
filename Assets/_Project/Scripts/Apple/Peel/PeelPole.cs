@@ -9,23 +9,31 @@ namespace Inktober2026.Apple.Peel
 	public static class PeelPole
 	{
 		/// <summary>
-		/// True when any part of the peeled strip is in one of the caps: the centre of the knife path is closer to the pole than the cap
-		/// and half the width of the strip together. So the strip never covers a pole, where the textures cannot be laid on it.
+		/// True when the knife is in one of the caps: the centre of the knife path is closer to the pole than <see cref="Reach"/>.
 		/// </summary>
 		/// <param name="position">Centre of the knife path, in the local space of the apple.</param>
 		/// <param name="width">Width of the strip, in world units.</param>
 		/// <param name="scale">World size of one local unit of the apple.</param>
 		/// <param name="northAngle">Angle of the cap at the north pole, in degrees.</param>
 		/// <param name="southAngle">Angle of the cap at the south pole, in degrees.</param>
-		public static bool Touches(Vector3 position, float width, float scale, float northAngle, float southAngle)
+		/// <param name="widthShare">How much of half the width of the strip is added to the caps: 0 counts only the centre of the knife path,
+		/// 1 its edge, so the strip never covers any of a cap.</param>
+		public static bool Touches(Vector3 position, float width, float scale, float northAngle, float southAngle, float widthShare = 1f)
 		{
 			float radius = position.magnitude * Mathf.Max(scale, 1e-6f);
 			if (radius < 1e-6f)
 				return false;
 
-			float halfWidthAngle = Mathf.Max(0f, width) * 0.5f / radius * Mathf.Rad2Deg;
 			float fromNorth = Vector3.Angle(Vector3.up, position);
-			return fromNorth < northAngle + halfWidthAngle || 180f - fromNorth < southAngle + halfWidthAngle;
+			return fromNorth < Reach(northAngle, width, radius, widthShare) || 180f - fromNorth < Reach(southAngle, width, radius, widthShare);
+		}
+
+		/// <summary>How close to a pole, as an angle from the axis in degrees, the centre of the knife path loses.</summary>
+		/// <param name="radius">Distance from the centre of the apple to the knife, in world units.</param>
+		public static float Reach(float capAngle, float width, float radius, float widthShare)
+		{
+			float halfWidthAngle = Mathf.Max(0f, width) * 0.5f / Mathf.Max(radius, 1e-6f) * Mathf.Rad2Deg;
+			return capAngle + halfWidthAngle * Mathf.Clamp01(widthShare);
 		}
 
 		/// <summary>
