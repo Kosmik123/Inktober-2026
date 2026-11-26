@@ -14,7 +14,7 @@ namespace Inktober2026.Game
 		Ready,
 		Playing,
 		Paused,
-		/// <summary>The peel crossed itself or the knife cut between two older lines. Restarting is possible after a short delay.</summary>
+		/// <summary>The peel crossed itself, the knife cut between two older lines or reached the stalk or the calyx. Restarting is possible after a short delay.</summary>
 		GameOver,
 	}
 
@@ -36,6 +36,10 @@ namespace Inktober2026.Game
 
 		[SerializeField]
 		private PeelEnclosureDetector enclosure;
+
+		[Tooltip("The knife reaching the stalk or the calyx ends the round. Empty: the one of the scene is looked for.")]
+		[SerializeField]
+		private PeelPoleCollision poleCollision;
 
 		[Tooltip("Starts the round, resumes after a pause and restarts after game over (for example UI/Click).")]
 		[SerializeField]
@@ -67,10 +71,14 @@ namespace Inktober2026.Game
 			knife = FindAnyObjectByType<KnifeController>();
 			selfCollision = FindAnyObjectByType<PeelSelfCollision>();
 			enclosure = FindAnyObjectByType<PeelEnclosureDetector>();
+			poleCollision = FindAnyObjectByType<PeelPoleCollision>();
 		}
 
         private void Awake()
         {
+            if (poleCollision == null)
+                poleCollision = FindAnyObjectByType<PeelPoleCollision>();
+
             MakeMusicSingleton();
 
             void MakeMusicSingleton()
@@ -96,6 +104,8 @@ namespace Inktober2026.Game
 		{
 			selfCollision.OnSelfIntersection += PeelSelfCollision_OnSelfIntersection;
 			enclosure.OnEnclosed += PeelEnclosureDetector_OnEnclosed;
+			if (poleCollision)
+				poleCollision.OnPoleHit += PeelPoleCollision_OnPoleHit;
 			confirmAction.action.performed += ConfirmAction_Performed;
 			pauseAction.action.performed += PauseAction_Performed;
 		}
@@ -156,6 +166,12 @@ namespace Inktober2026.Game
 				SetState(GameState.Paused);
 		}
 
+		private void PeelPoleCollision_OnPoleHit(Vector3 position)
+		{
+			if (state == GameState.Playing)
+				SetState(GameState.GameOver);
+		}
+
 		private void PeelSelfCollision_OnSelfIntersection(Vector3 crossingPoint)
 		{
 			if (state == GameState.Playing)
@@ -212,6 +228,8 @@ namespace Inktober2026.Game
 		{
 			selfCollision.OnSelfIntersection -= PeelSelfCollision_OnSelfIntersection;
 			enclosure.OnEnclosed -= PeelEnclosureDetector_OnEnclosed;
+			if (poleCollision)
+				poleCollision.OnPoleHit -= PeelPoleCollision_OnPoleHit;
 			confirmAction.action.performed -= ConfirmAction_Performed;
 			pauseAction.action.performed -= PauseAction_Performed;
 		}

@@ -41,6 +41,14 @@ namespace Inktober2026.Apple.Shape
         /// <summary>The seed of the apple of this round.</summary>
         public int UsedSeed => usedSeed;
 
+        /// <summary>
+        /// Distance from the centre to the surface in a direction, in local units, on the apple of this round. For things that sit on the apple.
+        /// </summary>
+        public float SurfaceRadius(Vector3 direction)
+        {
+            return shape.Radius * AppleMeshBuilder.RadiusFactor(direction.normalized, shape, AppleMeshBuilder.NoiseOffset(usedSeed));
+        }
+
         private void Awake()
         {
             usedSeed = randomSeed ? Random.Range(int.MinValue, int.MaxValue) : seed;

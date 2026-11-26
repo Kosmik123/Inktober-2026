@@ -1,5 +1,6 @@
 using Inktober2026.Apple;
 using Inktober2026.Apple.Knife;
+using Inktober2026.Apple.Peel;
 using UnityEngine;
 
 namespace Inktober2026.Game
@@ -36,6 +37,11 @@ namespace Inktober2026.Game
 		[SerializeField]
 		private float sharpness = 0.7f;
 
+		[Tooltip("The poles of the apple (the stalk and the calyx) stay at least this many degrees away from the knife, so the round cannot start on them.")]
+		[Range(0f, 89f)]
+		[SerializeField]
+		private float poleClearance = 40f;
+
 		private Tumble tumble;
 
 		private void Reset()
@@ -57,7 +63,11 @@ namespace Inktober2026.Game
 			if (gameFlow.State != GameState.Ready || knife.Surface == null)
 				return;
 
-			knife.Surface.rotation = tumble.Step(Time.deltaTime) * knife.Surface.rotation;
+			var surface = knife.Surface;
+			surface.rotation = tumble.Step(Time.deltaTime) * surface.rotation;
+
+			// The knife has not moved yet, so the point it is going to start from is the one between it and the centre of the apple.
+			surface.rotation = PeelPole.KeepAway(knife.transform.position - surface.position, surface.up, poleClearance) * surface.rotation;
 		}
 
 		private void OnValidate()
