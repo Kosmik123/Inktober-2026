@@ -64,12 +64,11 @@ namespace Inktober2026.Apple.Shape
         private MinMaxCurve unevennessScale = 1.3f;
         public float UnevennessScale => unevennessScale.Evaluate(time, lerpFactor);
 
-        private float time = Random.value;
-        private float lerpFactor = Random.value;
+        private float time;
+        private float lerpFactor;
 
         public AppleShapeSettings()
         {
-            Randomize();
         }
 
         public AppleShapeSettings(float radius, float shoulderWidening, float shoulderAngle, float shoulderSpread, float topDimpleDepth, float topDimpleSpread, float bottomDimpleDepth, float bottomDimpleSpread, float unevenness, float unevennessScale)
@@ -84,7 +83,6 @@ namespace Inktober2026.Apple.Shape
             this.bottomDimpleSpread = bottomDimpleSpread;
             this.unevenness = unevenness;
             this.unevennessScale = unevennessScale;
-            Randomize();
         }
 
         public void Randomize()
