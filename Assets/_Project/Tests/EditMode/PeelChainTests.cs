@@ -120,6 +120,36 @@ namespace Inktober2026.Tests.EditMode
         }
 
         [Test]
+        public void TheVelocityCorrection_StopsTheSwingFromBuildingUpAtTheTail()
+        {
+            var whip = CreateChain();
+            whip.Damping = 0f;
+            whip.VelocityCorrection = 0f;
+            var calm = CreateChain();
+            calm.Damping = 0f;
+
+            float whipSpeed = FastestTailSpeed(whip, 3f);
+            float calmSpeed = FastestTailSpeed(calm, 3f);
+
+            Assert.That(calmSpeed, Is.LessThan(whipSpeed * 0.8f), $"Calm {calmSpeed}, whip {whipSpeed}.");
+        }
+
+        private static float FastestTailSpeed(PeelChain chain, float seconds)
+        {
+            float fastest = 0f;
+            var last = chain.GetPosition(0);
+            int steps = Mathf.RoundToInt(seconds / Step);
+            for (int i = 0; i < steps; i++)
+            {
+                chain.Step(Step);
+                fastest = Mathf.Max(fastest, Vector3.Distance(last, chain.GetPosition(0)) / Step);
+                last = chain.GetPosition(0);
+            }
+
+            return fastest;
+        }
+
+        [Test]
         public void Clear_RemovesAllPoints()
         {
             var chain = CreateChain();

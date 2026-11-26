@@ -20,6 +20,11 @@ Specific to the Apple game. Shared knowledge is in `memory.md`.
 - On 2026-11-25 the user replaced the peeled skin strip with particles, because the strip peeled in an ugly way. `KnifeParticles` (a `ParticleSystem` on the `Particles` child of the Knife prefab) follows `GameFlow` (Playing plays, Paused pauses, the rest stops), sets the width of the emitter shape to `PeelTrail.Width` and the emission rate to `baseEmissionRate` times the knife `SpeedScale`. The Table prefab has a `Destroy Particle Trigger`.
 - The `Peel Strip` object is still in the scene, switched off. Its prefab, the scripts in `Peel/Strip`, their tests and the branch `1-apple/peel-strip-physics` are not removed; ask the user before removing them. The old UV bug at the poles and the strip physics are dropped with it.
 
+## Strip physics (merged back on 2026-11-26)
+
+- The user merged `1-apple/peel-strip-physics` into develop to work on it again. `PeelChain` is a follow-the-leader Verlet chain, so it needs `VelocityCorrection` (default 0.9, a field of `PhysicalPeelStripPath`): without it pulls build up towards the tail and damping hardly helps.
+- The chain lives in the frame of the path, but the strip is drawn with its newest node at the origin of the object (`PeelStripView`). Gravity and the apple sphere have to be converted with it; before, the sphere stayed behind while the head travelled away.
+
 ## Ready spin
 
 - In the Ready state `ReadySpin` (on the Knife prefab) turns the apple slowly at random (`Tumble`: an axis and a speed of 8..22 deg/s that drift to new random ones every 3..7 s). The knife stays where the scene put it and does not touch the apple. `KnifeController` initializes itself on its first update, that is when the round starts: it lays the walker on the apple under the knife and the look of the knife eases down from the scene pose. The round starts from the pose the apple has when Start is pressed, so the player picks the starting point. The size used for the speed is measured at the start rotation of the apple, so the turn does not change the speed. Not tried in Play Mode yet.

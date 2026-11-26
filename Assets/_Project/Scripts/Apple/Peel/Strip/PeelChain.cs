@@ -16,6 +16,8 @@ namespace Inktober2026.Apple.Peel
         private readonly List<Vector3> previous = new List<Vector3>();
         private readonly List<Vector3> rest = new List<Vector3>();
         private readonly List<float> linkLengths = new List<float>();
+        // How far the links moved every point in the current step.
+        private readonly List<Vector3> corrections = new List<Vector3>();
 
         public int Count => positions.Count;
 
@@ -30,6 +32,13 @@ namespace Inktober2026.Apple.Peel
 
         /// <summary>How fast the points are pulled back to the rest shape, per second. Zero lets the strip hang freely.</summary>
         public float RestStiffness { get; set; }
+
+        /// <summary>
+        /// How much of the speed that the links give to the points is taken back, from 0 to 1. The links move only the point farther from the head,
+        /// so without this every pull travels down to the tail and builds up there like in a whip, and <see cref="Damping"/> hardly helps.
+        /// With it the point nearer the head feels the weight of its neighbour (the velocity correction of Dynamic Follow The Leader). Near 1 is calm, 0 is off.
+        /// </summary>
+        public float VelocityCorrection { get; set; } = 0.9f;
 
         /// <summary>How many times the constraints are solved in one step.</summary>
         public int Iterations { get; set; } = 4;
@@ -49,6 +58,7 @@ namespace Inktober2026.Apple.Peel
             rest.Add(restPosition);
             positions.Add(restPosition);
             previous.Add(restPosition);
+            corrections.Add(Vector3.zero);
         }
 
         public void Clear()
@@ -57,6 +67,7 @@ namespace Inktober2026.Apple.Peel
             previous.Clear();
             rest.Clear();
             linkLengths.Clear();
+            corrections.Clear();
         }
 
         public Vector3 GetPosition(int index)
@@ -91,11 +102,25 @@ namespace Inktober2026.Apple.Peel
             positions[head] = rest[head];
             previous[head] = rest[head];
 
+            for (int i = 0; i <= head; i++)
+                corrections[i] = Vector3.zero;
+
             for (int iteration = 0; iteration < Iterations; iteration++)
             {
                 SolveLinks(head);
                 PushOutOfSphere(head);
             }
+
+            CorrectVelocities(head);
+        }
+
+        // In Verlet the velocity is the difference to the previous position, so moving the previous position changes the velocity.
+        // A point loses the share of the move that the link made to its neighbour on the side of the tail.
+        private void CorrectVelocities(int head)
+        {
+            float share = Mathf.Clamp01(VelocityCorrection);
+            for (int i = 1; i < head; i++)
+                previous[i] += corrections[i - 1] * share;
         }
 
         private Vector3 OutwardDirection(Vector3 position)
@@ -118,7 +143,9 @@ namespace Inktober2026.Apple.Peel
                 if (distance < MinDistance)
                     continue;
 
-                positions[a] = positions[a + 1] + fromNext * (linkLengths[a] / distance);
+                var corrected = positions[a + 1] + fromNext * (linkLengths[a] / distance);
+                corrections[a] += corrected - positions[a];
+                positions[a] = corrected;
             }
         }
 

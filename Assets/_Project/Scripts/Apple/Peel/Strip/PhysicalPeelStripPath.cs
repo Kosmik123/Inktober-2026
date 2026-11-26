@@ -36,6 +36,11 @@ namespace Inktober2026.Apple.Peel
         [SerializeField]
         private float damping = 2f;
 
+        [Tooltip("How much of the speed given by the links between the points is taken back, 0 to 1. Stops pulls from building up towards the tail. 0 is the old whip-like motion.")]
+        [Range(0f, 1f)]
+        [SerializeField]
+        private float velocityCorrection = 0.9f;
+
         [Header("Apple")]
         [Tooltip("The apple the strip must not enter. Empty means no collision and no leaning away.")]
         [SerializeField]
@@ -118,10 +123,14 @@ namespace Inktober2026.Apple.Peel
 
         private void ApplySettings()
         {
-            chain.Gravity = transform.InverseTransformDirection(Vector3.down) * gravity;
+            // The chain lives in the frame of the path, while gravity and the apple are where they are seen: in the frame of the object,
+            // in which the newest node stands at the origin.
+            var view = new PeelStripView(nodes[nodes.Count - 1]);
+            chain.Gravity = view.DirectionFromView(transform.InverseTransformDirection(Vector3.down)) * gravity;
             chain.OutwardAcceleration = outwardAcceleration;
             chain.Damping = damping;
             chain.RestStiffness = restStiffness;
+            chain.VelocityCorrection = velocityCorrection;
             chain.Iterations = iterations;
 
             chain.HasSphere = apple;
@@ -129,7 +138,7 @@ namespace Inktober2026.Apple.Peel
                 return;
 
             float scale = Mathf.Max(transform.lossyScale.x, 1e-6f);
-            chain.SphereCenter = transform.InverseTransformPoint(apple.position);
+            chain.SphereCenter = view.PointFromView(transform.InverseTransformPoint(apple.position));
             chain.SphereRadius = (appleRadius * apple.lossyScale.x + clearance) / scale;
         }
 

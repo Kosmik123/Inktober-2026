@@ -84,23 +84,9 @@ namespace Inktober2026.Apple.Peel
 				return;
 			}
 
-			// The nodes are in the frame the object had at the start, the last one becomes the pivot.
-
-			var lastNode = path.GetNode(path.NodeCount - 1);
-			var pivot = lastNode.Position;
-			float angle = Vector3.SignedAngle(Vector3.right, lastNode.Right, lastNode.Up);
-
-			
+			var view = new PeelStripView(path.GetNode(path.NodeCount - 1));
 			for (int i = 0; i < path.NodeCount; i++)
-			{
-				var node = path.GetNode(i);
-				var rotation = Quaternion.AngleAxis(-angle, lastNode.Up);
-				var rotatedNode = new PeelStripNode(
-					rotation * (node.Position - pivot), 
-					rotation * node.Right,
-					rotation * node.Up);
-				geometry.Append(profile.Sections[i], rotatedNode);
-			}
+				geometry.Append(profile.Sections[i], view.ToView(path.GetNode(i)));
 
 			isDirty = true;
 		}
