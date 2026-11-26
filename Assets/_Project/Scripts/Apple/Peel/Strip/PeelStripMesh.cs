@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Inktober2026.Apple.Peel
 {
@@ -9,10 +10,9 @@ namespace Inktober2026.Apple.Peel
 	/// The pivot of the object is always at the newest end: the vertices are
 	/// shifted so that the last node is at the origin, and the object is moved the other way, so the strip does not move in the world.
 	/// </summary>
-	[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(IPeelStripPath))]
+	[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 	public class PeelStripMesh : MonoBehaviour
 	{
-		[SerializeField]
 		private PeelWidthProfile profile;
 
 		[Tooltip("The strip stops growing after this many sections, to keep the mesh small.")]
@@ -29,7 +29,8 @@ namespace Inktober2026.Apple.Peel
 
 		private void Awake()
 		{
-			path = GetComponent<IPeelStripPath>();
+            profile = FindAnyObjectByType<PeelWidthProfile>();
+            path = GetComponent<IPeelStripPath>();
 			if (path == null)
 			{
 				Debug.LogError($"{nameof(PeelStripMesh)} needs a component implementing {nameof(IPeelStripPath)} on the same object.", this);
