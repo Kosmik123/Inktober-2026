@@ -87,8 +87,7 @@ namespace Inktober2026.Apple.Peel
 			if (path.NodeCount == 0)
 				return;
 
-			var liveNode = hasLive ? path.Preview(live) : default;
-			var view = new PeelStripView(hasLive ? liveNode : path.GetNode(path.NodeCount - 1));
+			var view = path.Lay(hasLive, live, out var liveNode);
 			for (int i = 0; i < path.NodeCount; i++)
 				geometry.Append(profile.Sections[i], view.ToView(path.GetNode(i)));
 

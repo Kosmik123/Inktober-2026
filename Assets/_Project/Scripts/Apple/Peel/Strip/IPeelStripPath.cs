@@ -16,10 +16,17 @@ namespace Inktober2026.Apple.Peel
         /// <summary>A new section was cut off at the end of the strip. Creates its node.</summary>
         void Append(PeelSection section);
 
-        PeelStripNode GetNode(int index);
+        /// <summary>
+        /// Prepares the nodes to be read with <see cref="GetNode"/> for a mesh that is about to be built, with or without the section
+        /// still growing at the knife. That section is not added.
+        /// </summary>
+        /// <param name="hasLive">True when there is a growing section.</param>
+        /// <param name="live">The growing section, the newest end of the strip when there is one.</param>
+        /// <param name="liveNode">The node of the growing section.</param>
+        /// <returns>How the nodes are brought to the frame the strip is drawn in, with the newest end at the origin.</returns>
+        PeelStripView Lay(bool hasLive, PeelSection live, out PeelStripNode liveNode);
 
-        /// <summary>The node <see cref="Append"/> would make for the section now. Nothing is added or changed. For the section still growing at the knife.</summary>
-        PeelStripNode Preview(PeelSection section);
+        PeelStripNode GetNode(int index);
 
         /// <summary>Removes all nodes.</summary>
         void Clear();

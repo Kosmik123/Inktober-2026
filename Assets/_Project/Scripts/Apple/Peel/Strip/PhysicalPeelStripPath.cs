@@ -116,6 +116,12 @@ namespace Inktober2026.Apple.Peel
             return curve.Preview(section);
         }
 
+        public PeelStripView Lay(bool hasLive, PeelSection live, out PeelStripNode liveNode)
+        {
+            liveNode = hasLive ? Preview(live) : default;
+            return new PeelStripView(hasLive ? liveNode : GetNode(NodeCount - 1));
+        }
+
         public PeelStripNode GetNode(int index)
         {
             return nodes[index];

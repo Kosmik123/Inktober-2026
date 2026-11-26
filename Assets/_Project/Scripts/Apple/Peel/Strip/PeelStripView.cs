@@ -12,6 +12,9 @@ namespace Inktober2026.Apple.Peel
 		private readonly Vector3 pivot;
 		private readonly Quaternion rotation;
 
+		/// <summary>For nodes that are already in the frame the strip is drawn in.</summary>
+		public static PeelStripView Identity => new PeelStripView(new PeelStripNode(Vector3.zero, Vector3.right, Vector3.up));
+
 		public PeelStripView(PeelStripNode newest)
 		{
 			pivot = newest.Position;

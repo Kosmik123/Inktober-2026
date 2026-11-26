@@ -28,7 +28,7 @@ Specific to the Apple game. Shared knowledge is in `memory.md`.
 ## Strip comes out smoothly
 
 - Between two sections (every 0.03) `PeelStripMesh` adds a live section from the last recorded one to the knife (`PeelWidthProfile.TryGetLiveSection`, `PeelSectionRecorder.TryPreview`, `IPeelStripPath.Preview`; nothing is stored). Its turn and edge change come in with its length, because the view turns the whole strip by the newest node and the noise of a very short piece would shake it. The whole mesh is now rebuilt every frame the knife moves; check the cost on a phone with a long strip.
-- Planned next (agreed on 2026-11-26): a gravity shape instead of physics. The yaw of every segment comes from the flat shape, only the pitch depends on the distance from the knife (from +45 degrees, the knife up is (0, 1, -1), towards -90), the width axis stays horizontal, no collision, lag or artificial twist.
+- `HangingPeelStripPath` (shape in `PeelHangingShape`) is that gravity shape: the strip leaves along the knife up axis and the pitch goes to -90 over `bendLength` (spread by the `bend` curve). `IPeelStripPath.Lay` prepares the nodes and says how they are viewed; this path lays them in the drawn frame itself. Original plan (agreed on 2026-11-26): The yaw of every segment comes from the flat shape, only the pitch depends on the distance from the knife (from +45 degrees, the knife up is (0, 1, -1), towards -90), the width axis stays horizontal, no collision, lag or artificial twist.
 
 ## Ready spin
 

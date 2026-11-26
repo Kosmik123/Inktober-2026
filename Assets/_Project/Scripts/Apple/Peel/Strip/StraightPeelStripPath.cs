@@ -25,6 +25,12 @@ namespace Inktober2026.Apple.Peel
             return new PeelStripNode(Vector3.forward * section.Distance, Vector3.right, Vector3.up);
         }
 
+        public PeelStripView Lay(bool hasLive, PeelSection live, out PeelStripNode liveNode)
+        {
+            liveNode = hasLive ? Preview(live) : default;
+            return new PeelStripView(hasLive ? liveNode : GetNode(NodeCount - 1));
+        }
+
         public PeelStripNode GetNode(int index)
         {
             return nodes[index];
