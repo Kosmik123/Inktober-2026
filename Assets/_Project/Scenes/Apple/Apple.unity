@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!43 &24973494
+--- !u!43 &47411790
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -516,7 +516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e95a7fe4bbd188444b1ac77b25ff51d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Inktober::Inktober.Apple.Peel.PeelEnclosureDetector
---- !u!43 &672524409
+--- !u!43 &774229431
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1432,14 +1432,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 82.655
       objectReference: {fileID: 0}
-    - target: {fileID: 4518125649311510015, guid: c022da28d578610478e86cb05b539393, type: 3}
-      propertyPath: shape.unevenness
-      value: -0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 4518125649311510015, guid: c022da28d578610478e86cb05b539393, type: 3}
-      propertyPath: shape.unevenness.m_Mode
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 5574061277041920829, guid: c022da28d578610478e86cb05b539393, type: 3}
       propertyPath: m_Name
       value: Apple
@@ -1447,7 +1439,7 @@ PrefabInstance:
     - target: {fileID: 6444653384517089377, guid: c022da28d578610478e86cb05b539393, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 24973494}
+      objectReference: {fileID: 47411790}
     - target: {fileID: 6907495419429361542, guid: c022da28d578610478e86cb05b539393, type: 3}
       propertyPath: trail
       value: 
@@ -1455,7 +1447,7 @@ PrefabInstance:
     - target: {fileID: 8867348413773368891, guid: c022da28d578610478e86cb05b539393, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 672524409}
+      objectReference: {fileID: 774229431}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

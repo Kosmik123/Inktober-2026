@@ -52,6 +52,7 @@ namespace Inktober2026.Apple.Shape
         private void Awake()
         {
             usedSeed = randomSeed ? Random.Range(int.MinValue, int.MaxValue) : seed;
+            shape.Randomize();
             mesh = AppleMeshBuilder.Build(shape, usedSeed, segments, rings);
             mesh.hideFlags = HideFlags.HideAndDontSave;
 
