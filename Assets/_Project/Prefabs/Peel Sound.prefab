@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: 0e7d65d720051e0409ffdf972f37209f, type: 3}
-  output: {fileID: 24300002, guid: ef74dacb3d4cfc449b4fdb6aeb4db9c4, type: 2}
+  output: {fileID: -7867263095273770092, guid: ef74dacb3d4cfc449b4fdb6aeb4db9c4, type: 2}
   volume: 1
   pitchCenter: 1
   pitchSpread: 0.1
@@ -56,12 +56,12 @@ MonoBehaviour:
   openCutoff: 22000
   mutedCutoff: 700
   maxVoices: 3
-  activeVoices: 0
   minOverlap: 1
   maxOverlap: 2.5
   minCrossfadeDuration: 0.4
   maxCrossfadeDuration: 1
   fadeDuration: 0.4
+  activeVoices: 0
 --- !u!114 &1000000000000004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,8 +86,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 23bd5ba37ec04e64b143f87478bec6cb, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   knife: {fileID: 0}
   audioSource: {fileID: 1000000000000003}
   speedToPitch: 0.5
