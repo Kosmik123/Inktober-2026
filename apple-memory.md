@@ -34,6 +34,11 @@ Specific to the Apple game. Shared knowledge is in `memory.md`.
 
 - Decided on 2026-11-27: the poles are blocked, reaching one loses the round; this also keeps the strip off the poles, where its UV used to break. `PeelPoleCollision` (on the Collision Controller prefab) ends the round when the edge of the strip gets within `stalkAngle` / `calyxAngle` (6 degrees) of a pole (`PeelPole.Touches`). `ReadySpin` keeps the poles at least `poleClearance` (40 degrees) from the knife. The look: `AppleStalkMesh` and `AppleCalyxMesh` (procedural), prefabs `Apple Stalk` and `Apple Calyx` in the Apple prefab, placed in the dimples by `AppleEnds`. They have no colliders.
 
+## Flesh look (`PeeledApple` shader)
+
+- Uneven wetness (dry patches and wet spots from noise that repeats along U) and fake scattering from the main light only: a warm light wrap on the flesh, and `_Translucency` for thin things (set on the strip material variants: flesh 0.55, skin 0.3; 0 on the apple). No extra pass. The flesh has no albedo texture yet; the user is looking for one, and the base flesh smoothness (0.855) is part of that tuning.
+- A quick way to see materials without Play Mode: a temporary editor script run with `unity run . -- -executeMethod ...` that renders with `RenderPipeline.SubmitRenderRequest` into a PNG.
+
 ## Ready spin
 
 - In the Ready state `ReadySpin` (on the Knife prefab) turns the apple slowly at random (`Tumble`: an axis and a speed of 8..22 deg/s that drift to new random ones every 3..7 s). The knife stays where the scene put it and does not touch the apple. `KnifeController` initializes itself on its first update, that is when the round starts: it lays the walker on the apple under the knife and the look of the knife eases down from the scene pose. The round starts from the pose the apple has when Start is pressed, so the player picks the starting point. The size used for the speed is measured at the start rotation of the apple, so the turn does not change the speed. Not tried in Play Mode yet.

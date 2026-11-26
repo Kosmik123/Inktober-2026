@@ -18,9 +18,13 @@ namespace Inktober2026.Apple.Shape
 		[SerializeField]
 		private Transform calyx;
 
-		[Tooltip("How deep the stalk and the calyx are sunk under the surface, in local units, so their bases do not float.")]
+		[Tooltip("How deep the stalk is sunk under the surface, in local units, so its base does not float.")]
 		[SerializeField]
 		private float sink = 0.01f;
+
+		[Tooltip("How high the calyx lies over the bottom of its dimple, in local units. Its leaves are flat, so sunk ones are hidden.")]
+		[SerializeField]
+		private float calyxLift = 0.005f;
 
 		private void Reset()
 		{
@@ -30,17 +34,17 @@ namespace Inktober2026.Apple.Shape
 		// The shape is built in Awake.
 		private void Start()
 		{
-			Place(stalk, Vector3.up);
-			Place(calyx, Vector3.down);
+			Place(stalk, Vector3.up, -sink);
+			Place(calyx, Vector3.down, calyxLift);
 		}
 
-		private void Place(Transform end, Vector3 pole)
+		private void Place(Transform end, Vector3 pole, float lift)
 		{
 			if (end == null || shape == null)
 				return;
 
 			var surface = shape.transform;
-			end.position = surface.TransformPoint(pole * (shape.SurfaceRadius(pole) - sink));
+			end.position = surface.TransformPoint(pole * (shape.SurfaceRadius(pole) + lift));
 			end.rotation = surface.rotation * Quaternion.FromToRotation(Vector3.up, pole);
 		}
 	}

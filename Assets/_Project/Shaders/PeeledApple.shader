@@ -16,6 +16,21 @@ Shader "Inktober/PeeledApple"
         _FleshNormalScale ("Flesh Normal Scale", Float) = 1
         _FleshSmoothness ("Flesh Smoothness", Range(0, 1)) = 0.8
 
+        [Header(Uneven wetness of the flesh)]
+        _FleshDryness ("Dry Patches (smoothness taken away)", Range(0, 1)) = 0.4
+        _FleshPatchScale ("Patch Scale", Float) = 8
+        _FleshSpotSmoothness ("Wet Spot Smoothness", Range(0, 1)) = 0.97
+        _FleshSpotAmount ("Wet Spot Amount", Range(0, 1)) = 0.3
+        _FleshSpotScale ("Wet Spot Scale", Float) = 80
+
+        [Header(Fake subsurface scattering)]
+        _ScatterColor ("Scatter Color", Color) = (1, 0.72, 0.42, 1)
+        _ScatterWrap ("Light Wrap Width (flesh)", Range(0, 1)) = 0.6
+        _ScatterStrength ("Light Wrap Strength (flesh)", Range(0, 2)) = 0.7
+        _Translucency ("Translucency (thin things only)", Range(0, 2)) = 0
+        _TranslucencyPower ("Translucency Focus", Range(1, 16)) = 4
+        _TranslucencyDistortion ("Translucency Distortion", Range(0, 1)) = 0.3
+
         [NoScaleOffset] _Mask ("Peel Mask (R)", 2D) = "black" {}
         _MaskResolution ("Mask Resolution", Float) = 2048
         _Threshold ("Color Threshold", Range(0.05, 0.95)) = 0.5
@@ -55,6 +70,17 @@ Shader "Inktober/PeeledApple"
             float _MaskResolution;
             float _Threshold;
             float _Depth;
+            half4 _ScatterColor;
+            half _FleshDryness;
+            half _FleshSpotSmoothness;
+            half _FleshSpotAmount;
+            float _FleshPatchScale;
+            float _FleshSpotScale;
+            half _ScatterWrap;
+            half _ScatterStrength;
+            half _Translucency;
+            half _TranslucencyPower;
+            half _TranslucencyDistortion;
         CBUFFER_END
         ENDHLSL
 
@@ -148,6 +174,69 @@ Shader "Inktober/PeeledApple"
                 return output;
             }
 
+            float Hash(float2 cell)
+            {
+                float3 p = frac(float3(cell.xyx) * 0.1031);
+                p += dot(p, p.yzx + 33.33);
+                return frac((p.x + p.y) * p.z);
+            }
+
+            // Smooth noise from 0 to 1 that repeats along U, so it has no line at the UV seam (the U of the strip also goes on past 1).
+            // The apple texture is twice as wide as high, so there are twice as many cells along U.
+            // "fade" goes to 1 when the cells get smaller than a pixel, where the noise would only flicker.
+            float SeamlessNoise(float2 uv, float scale, out float fade)
+            {
+                float cells = max(1.0, round(scale));
+                float2 p = uv * float2(cells * 2.0, cells);
+                float2 size = fwidth(p);
+                fade = saturate(max(size.x, size.y) - 0.5);
+
+                float2 cell = floor(p);
+                float2 f = frac(p);
+                f = f * f * (3.0 - 2.0 * f);
+
+                float period = cells * 2.0;
+                float x0 = cell.x - period * floor(cell.x / period);
+                float x1 = cell.x + 1.0 - period * floor((cell.x + 1.0) / period);
+                float bottom = lerp(Hash(float2(x0, cell.y)), Hash(float2(x1, cell.y)), f.x);
+                float top = lerp(Hash(float2(x0, cell.y + 1.0)), Hash(float2(x1, cell.y + 1.0)), f.x);
+                return lerp(bottom, top, f.y);
+            }
+
+            // The flesh is not wet everywhere alike: large drier patches and small wet spots that glint.
+            half FleshSmoothness(float2 uv)
+            {
+                float patchFade;
+                float patches = SeamlessNoise(uv, _FleshPatchScale, patchFade);
+                half smoothness = saturate(_FleshSmoothness - _FleshDryness * (1.0 - smoothstep(0.25, 0.75, patches)));
+
+                float spotFade;
+                float spots = SeamlessNoise(uv + 0.37, _FleshSpotScale, spotFade);
+                float threshold = 1.0 - _FleshSpotAmount;
+                float wet = smoothstep(threshold - 0.08, threshold + 0.08, spots);
+                wet = lerp(wet, _FleshSpotAmount * 0.5, spotFade);
+                return lerp(smoothness, _FleshSpotSmoothness, wet);
+            }
+
+            // A cheap stand-in for the light that goes under the surface. It uses only the main light and no extra pass.
+            half3 Scatter(float3 normalWS, float3 viewWS, Light light, half3 albedo, half flesh)
+            {
+                float facing = dot(normalWS, light.direction);
+
+                // Flesh: the light reaches past the edge of the shadow side, in a warm colour.
+                float wrapped = saturate((facing + _ScatterWrap) / (1.0 + _ScatterWrap));
+                float past = max(0.0, wrapped * wrapped - saturate(facing) * saturate(facing));
+                float amount = past * _ScatterStrength * flesh;
+
+                // Thin things: the light from behind comes through, the most when looking towards it.
+                float3 through = -normalize(light.direction + normalWS * _TranslucencyDistortion);
+                float towards = pow(saturate(dot(viewWS, through)), _TranslucencyPower);
+                amount += (saturate(-facing) * 0.5 + towards * 0.5) * _Translucency;
+
+                // No shadow here: the side turned from the light is always in its own shadow, and that is the side that scatters.
+                return albedo * _ScatterColor.rgb * light.color * (light.distanceAttenuation * amount);
+            }
+
             half4 frag(Varyings input) : SV_Target
             {
                 float3 surfaceNormalWS = normalize(input.normalWS);
@@ -184,12 +273,13 @@ Shader "Inktober/PeeledApple"
 
                 SurfaceData surfaceData = (SurfaceData)0;
                 surfaceData.albedo = lerp(_SkinColor.rgb * skinTexture, _FleshColor.rgb * fleshTexture, flesh);
-                surfaceData.smoothness = lerp(_SkinSmoothness, _FleshSmoothness, flesh);
+                surfaceData.smoothness = lerp(_SkinSmoothness, FleshSmoothness(input.uv), flesh);
                 surfaceData.occlusion = 1;
                 surfaceData.alpha = 1;
                 surfaceData.normalTS = half3(0, 0, 1);
 
                 half4 color = UniversalFragmentPBR(inputData, surfaceData);
+                color.rgb += Scatter(normalWS, inputData.viewDirectionWS, GetMainLight(), surfaceData.albedo, flesh);
                 color.rgb = MixFog(color.rgb, inputData.fogCoord);
                 return color;
             }
