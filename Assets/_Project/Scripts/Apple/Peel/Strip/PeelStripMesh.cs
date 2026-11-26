@@ -5,7 +5,8 @@ namespace Inktober2026.Apple.Peel
 	/// <summary>
 	/// Builds the mesh of the peeled strip from the sections of a <see cref="PeelWidthProfile"/> and places them with the
 	/// <see cref="IPeelStripPath"/> on the same object. The mesh grows with the strip and is rebuilt when it does (or every
-	/// frame for a dynamic path, a simulation). The pivot of the object is always at the newest section: the vertices are
+	/// frame for a dynamic path, a simulation). Between two sections the piece still growing at the knife is added too, so the strip comes out smoothly.
+	/// The pivot of the object is always at the newest end: the vertices are
 	/// shifted so that the last node is at the origin, and the object is moved the other way, so the strip does not move in the world.
 	/// </summary>
 	[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(IPeelStripPath))]
@@ -23,6 +24,8 @@ namespace Inktober2026.Apple.Peel
 		private Mesh mesh;
 		private bool isDirty;
 		private bool needsRebuild;
+		// Distance of the growing section in the mesh, negative when the mesh has none.
+		private float builtLiveDistance = -1f;
 
 		private void Awake()
 		{
@@ -71,30 +74,37 @@ namespace Inktober2026.Apple.Peel
 			path.Clear();
 			geometry.Clear();
 			needsRebuild = false;
+			builtLiveDistance = -1f;
 			isDirty = true;
 		}
 
-		private void Rebuild()
+		private void Rebuild(bool hasLive, PeelSection live)
 		{
 			needsRebuild = false;
+			builtLiveDistance = hasLive ? live.Distance : -1f;
 			geometry.Clear();
+			isDirty = true;
 			if (path.NodeCount == 0)
-			{
-				isDirty = true;
 				return;
-			}
 
-			var view = new PeelStripView(path.GetNode(path.NodeCount - 1));
+			var liveNode = hasLive ? path.Preview(live) : default;
+			var view = new PeelStripView(hasLive ? liveNode : path.GetNode(path.NodeCount - 1));
 			for (int i = 0; i < path.NodeCount; i++)
 				geometry.Append(profile.Sections[i], view.ToView(path.GetNode(i)));
 
-			isDirty = true;
+			if (hasLive)
+				geometry.Append(live, view.ToView(liveNode));
 		}
 
 		private void LateUpdate()
 		{
-			if (path.IsDynamic || needsRebuild)
-				Rebuild();
+			PeelSection live = default;
+			bool hasLive = path.NodeCount > 0 && path.NodeCount < maxSections && profile.TryGetLiveSection(out live);
+			float liveDistance = hasLive ? live.Distance : -1f;
+
+			// The knife standing still leaves the growing section as it was, so there is nothing to rebuild.
+			if (path.IsDynamic || needsRebuild || Mathf.Approximately(liveDistance, builtLiveDistance) == false)
+				Rebuild(hasLive, live);
 
 			if (isDirty == false)
 				return;

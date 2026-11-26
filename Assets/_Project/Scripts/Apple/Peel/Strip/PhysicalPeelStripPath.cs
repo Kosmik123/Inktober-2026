@@ -108,6 +108,14 @@ namespace Inktober2026.Apple.Peel
             UpdateNodes();
         }
 
+        // The growing piece lies in the flat shape, as the head of the chain does, so it is not simulated.
+        public PeelStripNode Preview(PeelSection section)
+        {
+            curve.TurnScale = turnScale;
+            curve.Climb = climb;
+            return curve.Preview(section);
+        }
+
         public PeelStripNode GetNode(int index)
         {
             return nodes[index];

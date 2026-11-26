@@ -39,6 +39,17 @@ namespace Inktober2026.Apple.Peel
         /// <summary>The sections of the strip, from the beginning of the peel.</summary>
         public IReadOnlyList<PeelSection> Sections => sections;
 
+        /// <summary>The section still growing at the knife, past the last of <see cref="Sections"/>. It changes every frame the knife moves.</summary>
+        public bool TryGetLiveSection(out PeelSection section)
+        {
+            section = default;
+            if (recorder == null || trail == null || trail.TryGetHead(out var head, out float length) == false)
+                return false;
+
+            float scale = Mathf.Abs(trail.Surface.lossyScale.x);
+            return recorder.TryPreview(head, length, trail.Width, scale, out section);
+        }
+
         private void Reset()
         {
             trail = FindAnyObjectByType<PeelTrail>();

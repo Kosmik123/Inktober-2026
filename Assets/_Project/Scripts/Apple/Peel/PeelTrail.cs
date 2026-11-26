@@ -74,6 +74,25 @@ namespace Inktober2026.Apple.Peel
         /// <summary>The object the points are local to.</summary>
         public Transform Surface => surface;
 
+        /// <summary>
+        /// Where the knife is right now, which is usually a little past the newest recorded point, and the length of the peel up to there.
+        /// False before the first point and when the knife is off the surface. Nothing is recorded.
+        /// </summary>
+        public bool TryGetHead(out PeelPoint head, out float headLength)
+        {
+            head = default;
+            headLength = length;
+            if (points.Count == 0 || walker == null || walker.IsOnSurface == false)
+                return false;
+
+            var position = surface.InverseTransformPoint(walker.Position);
+            var normal = surface.InverseTransformDirection(walker.Normal).normalized;
+            var forward = surface.InverseTransformDirection(walker.Forward).normalized;
+            head = new PeelPoint(position, normal, forward, Width);
+            headLength += Vector3.Distance(surface.TransformPoint(points[points.Count - 1].Position), walker.Position);
+            return true;
+        }
+
         /// <summary>Removes all points and resets the length.</summary>
         public void Clear()
         {

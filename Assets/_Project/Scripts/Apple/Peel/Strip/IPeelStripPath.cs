@@ -18,6 +18,9 @@ namespace Inktober2026.Apple.Peel
 
         PeelStripNode GetNode(int index);
 
+        /// <summary>The node <see cref="Append"/> would make for the section now. Nothing is added or changed. For the section still growing at the knife.</summary>
+        PeelStripNode Preview(PeelSection section);
+
         /// <summary>Removes all nodes.</summary>
         void Clear();
     }

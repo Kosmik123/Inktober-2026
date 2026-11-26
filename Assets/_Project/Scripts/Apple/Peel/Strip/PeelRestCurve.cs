@@ -25,16 +25,29 @@ namespace Inktober2026.Apple.Peel
 
         public PeelStripNode Append(PeelSection section)
         {
-            if (nodes.Count > 0)
-            {
-                heading += section.Turn * TurnScale;
-                flatPosition += Direction(heading) * (section.Distance - lastDistance);
-            }
-
+            var node = Next(section, out heading, out flatPosition);
             lastDistance = section.Distance;
-            var node = new PeelStripNode(flatPosition + Vector3.up * (section.Distance * Climb), Across(heading), Vector3.up);
             nodes.Add(node);
             return node;
+        }
+
+        /// <summary>The node <see cref="Append"/> would make, without adding it.</summary>
+        public PeelStripNode Preview(PeelSection section)
+        {
+            return Next(section, out _, out _);
+        }
+
+        private PeelStripNode Next(PeelSection section, out float nextHeading, out Vector3 nextPosition)
+        {
+            nextHeading = heading;
+            nextPosition = flatPosition;
+            if (nodes.Count > 0)
+            {
+                nextHeading += section.Turn * TurnScale;
+                nextPosition += Direction(nextHeading) * (section.Distance - lastDistance);
+            }
+
+            return new PeelStripNode(nextPosition + Vector3.up * (section.Distance * Climb), Across(nextHeading), Vector3.up);
         }
 
         public PeelStripNode GetNode(int index)

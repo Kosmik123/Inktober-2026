@@ -34,6 +34,22 @@ namespace Inktober2026.Tests.EditMode
         }
 
         [Test]
+        public void Preview_GivesTheNodeOfTheNextAppend_AndAddsNothing()
+        {
+            var path = CreatePath();
+            path.Append(SectionAt(0f));
+            path.Append(SectionAt(0.03f, 15f));
+
+            var preview = path.Preview(SectionAt(0.05f, 20f));
+            Assert.That(path.NodeCount, Is.EqualTo(2));
+            path.Append(SectionAt(0.05f, 20f));
+
+            var appended = path.GetNode(2);
+            Assert.That(Vector3.Distance(preview.Position, appended.Position), Is.LessThan(Tolerance));
+            Assert.That(Vector3.Distance(preview.Right, appended.Right), Is.LessThan(Tolerance));
+        }
+
+        [Test]
         public void WithoutTurns_TheStripGoesStraightAlongZ()
         {
             var path = CreatePath();

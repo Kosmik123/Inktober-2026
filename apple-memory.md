@@ -25,6 +25,11 @@ Specific to the Apple game. Shared knowledge is in `memory.md`.
 - The user merged `1-apple/peel-strip-physics` into develop to work on it again. `PeelChain` is a follow-the-leader Verlet chain, so it needs `VelocityCorrection` (default 0.9, a field of `PhysicalPeelStripPath`): without it pulls build up towards the tail and damping hardly helps.
 - The chain lives in the frame of the path, but the strip is drawn with its newest node at the origin of the object (`PeelStripView`). Gravity and the apple sphere have to be converted with it; before, the sphere stayed behind while the head travelled away.
 
+## Strip comes out smoothly
+
+- Between two sections (every 0.03) `PeelStripMesh` adds a live section from the last recorded one to the knife (`PeelWidthProfile.TryGetLiveSection`, `PeelSectionRecorder.TryPreview`, `IPeelStripPath.Preview`; nothing is stored). Its turn and edge change come in with its length, because the view turns the whole strip by the newest node and the noise of a very short piece would shake it. The whole mesh is now rebuilt every frame the knife moves; check the cost on a phone with a long strip.
+- Planned next (agreed on 2026-11-26): a gravity shape instead of physics. The yaw of every segment comes from the flat shape, only the pitch depends on the distance from the knife (from +45 degrees, the knife up is (0, 1, -1), towards -90), the width axis stays horizontal, no collision, lag or artificial twist.
+
 ## Ready spin
 
 - In the Ready state `ReadySpin` (on the Knife prefab) turns the apple slowly at random (`Tumble`: an axis and a speed of 8..22 deg/s that drift to new random ones every 3..7 s). The knife stays where the scene put it and does not touch the apple. `KnifeController` initializes itself on its first update, that is when the round starts: it lays the walker on the apple under the knife and the look of the knife eases down from the scene pose. The round starts from the pose the apple has when Start is pressed, so the player picks the starting point. The size used for the speed is measured at the start rotation of the apple, so the turn does not change the speed. Not tried in Play Mode yet.

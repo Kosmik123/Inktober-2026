@@ -29,6 +29,13 @@ namespace Inktober2026.Apple.Peel
             curve.Append(section);
         }
 
+        public PeelStripNode Preview(PeelSection section)
+        {
+            curve.TurnScale = turnScale;
+            curve.Climb = climb;
+            return curve.Preview(section);
+        }
+
         public PeelStripNode GetNode(int index)
         {
             return curve.GetNode(index);

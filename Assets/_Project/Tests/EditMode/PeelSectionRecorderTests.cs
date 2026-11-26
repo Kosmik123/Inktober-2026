@@ -47,6 +47,83 @@ namespace Inktober2026.Tests.EditMode
             return new PeelSectionRecorder(Spacing, IgnoredTail, HeightTolerance);
         }
 
+        // A recorder with one section at the start and the knife gone on along a line bent to the right.
+        private PeelSectionRecorder RecorderPastTheFirstSections(List<PeelPoint> points)
+        {
+            var recorder = new PeelSectionRecorder(Spacing, IgnoredTail, HeightTolerance);
+            for (int i = 0; i <= 2; i++)
+            {
+                points.Add(new PeelPoint(new Vector3(0f, 0.5f, i * Spacing), Vector3.up, Vector3.forward, Width));
+                recorder.TryRecord(points, i * Spacing, Width, 1f, out _);
+            }
+
+            return recorder;
+        }
+
+        private static PeelPoint BentHead(float grown)
+        {
+            var step = new Vector3(0.5f, 0f, 1f).normalized * (Spacing * grown);
+            return new PeelPoint(new Vector3(0f, 0.5f, 2f * Spacing) + step, Vector3.up, Vector3.forward, Width);
+        }
+
+        [Test]
+        public void Preview_BeforeTheFirstSectionOrWithoutGrowth_IsNothing()
+        {
+            var empty = new PeelSectionRecorder(Spacing, IgnoredTail, HeightTolerance);
+            Assert.IsFalse(empty.TryPreview(BentHead(0.5f), Spacing, Width, 1f, out _));
+
+            var recorder = RecorderPastTheFirstSections(new List<PeelPoint>());
+            Assert.IsFalse(recorder.TryPreview(BentHead(0f), 2f * Spacing, Width, 1f, out _));
+        }
+
+        [Test]
+        public void Preview_GrownToTheSpacing_IsTheSectionThatGetsRecorded()
+        {
+            var points = new List<PeelPoint>();
+            var recorder = RecorderPastTheFirstSections(points);
+
+            Assert.IsTrue(recorder.TryPreview(BentHead(1f), 3.01f * Spacing, Width, 1f, out var preview));
+            points.Add(BentHead(1f));
+            Assert.IsTrue(recorder.TryRecord(points, 3.01f * Spacing, Width, 1f, out var recorded));
+
+            Assert.AreEqual(recorded.Turn, preview.Turn, 1e-3f);
+            Assert.AreEqual(recorded.LeftEdge, preview.LeftEdge, 1e-5f);
+            Assert.AreEqual(recorded.RightEdge, preview.RightEdge, 1e-5f);
+            Assert.Less(Vector2.Distance(recorded.LeftUv, preview.LeftUv), 1e-5f);
+        }
+
+        [Test]
+        public void Preview_BringsTheTurnInWithItsLength()
+        {
+            var recorder = RecorderPastTheFirstSections(new List<PeelPoint>());
+
+            recorder.TryPreview(BentHead(0.25f), 2.25f * Spacing, Width, 1f, out var quarter);
+            recorder.TryPreview(BentHead(1f), 3f * Spacing, Width, 1f, out var whole);
+
+            Assert.Greater(whole.Turn, 1f);
+            Assert.AreEqual(whole.Turn * 0.25f, quarter.Turn, 0.05f);
+        }
+
+        [Test]
+        public void Preview_ChangesNothing()
+        {
+            var plainPoints = new List<PeelPoint>();
+            var plain = RecorderPastTheFirstSections(plainPoints);
+            var previewedPoints = new List<PeelPoint>();
+            var previewed = RecorderPastTheFirstSections(previewedPoints);
+
+            previewed.TryPreview(BentHead(0.3f), 2.3f * Spacing, Width, 1f, out _);
+            previewed.TryPreview(BentHead(0.9f), 2.9f * Spacing, Width, 1f, out _);
+            plainPoints.Add(BentHead(1f));
+            previewedPoints.Add(BentHead(1f));
+            plain.TryRecord(plainPoints, 3.01f * Spacing, Width, 1f, out var expected);
+            previewed.TryRecord(previewedPoints, 3.01f * Spacing, Width, 1f, out var actual);
+
+            Assert.AreEqual(expected.Turn, actual.Turn, 1e-5f);
+            Assert.AreEqual(expected.LeftEdge, actual.LeftEdge, 1e-6f);
+            Assert.AreEqual(expected.LeftUv.x, actual.LeftUv.x, 1e-6f);
+        }
+
         [Test]
         public void TheFirstPoint_StartsASectionWithTheFullWidth()
         {

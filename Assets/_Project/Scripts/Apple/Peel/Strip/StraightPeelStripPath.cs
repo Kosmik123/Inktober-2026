@@ -17,7 +17,12 @@ namespace Inktober2026.Apple.Peel
 
         public void Append(PeelSection section)
         {
-            nodes.Add(new PeelStripNode(Vector3.forward * section.Distance, Vector3.right, Vector3.up));
+            nodes.Add(Preview(section));
+        }
+
+        public PeelStripNode Preview(PeelSection section)
+        {
+            return new PeelStripNode(Vector3.forward * section.Distance, Vector3.right, Vector3.up);
         }
 
         public PeelStripNode GetNode(int index)
